@@ -1401,14 +1401,21 @@ function exRenderDrop(input){
     setTimeout(()=>{EX_SUPPRESS_REOPEN=false;},0);
   };
   drop.querySelectorAll('.opt,.custom').forEach(row=>{
-    let picked=false;
-    const pick=ev=>{
-      if(picked)return; picked=true;
-      ev.preventDefault();
-      selectRow(row.dataset.name);
-    };
-    row.addEventListener('pointerdown',pick);
-    row.addEventListener('mousedown',pick);
+    // Tap-vs-scroll distance check instead of preventDefault-on-pointerdown:
+    // preventDefault on pointerdown cancels the browser's native scroll gesture
+    // for that touch, which blocked scrolling anywhere inside the list. Tracking
+    // movement and only selecting on pointerup-with-no-movement lets scroll
+    // gestures pass through untouched while taps still register reliably.
+    let startX=0, startY=0, moved=false;
+    row.addEventListener('pointerdown',ev=>{
+      startX=ev.clientX; startY=ev.clientY; moved=false;
+    });
+    row.addEventListener('pointermove',ev=>{
+      if(Math.abs(ev.clientX-startX)>10 || Math.abs(ev.clientY-startY)>10) moved=true;
+    });
+    row.addEventListener('pointerup',()=>{
+      if(!moved) selectRow(row.dataset.name);
+    });
   });
 }
 document.addEventListener('pointerdown',ev=>{
@@ -1454,7 +1461,7 @@ function drawEditor(){
     if(f===0){
       i.onfocus=()=>exRenderDrop(i);
       i.onblur=()=>{
-        EX_BLUR_TIMER=setTimeout(()=>{ if(EXOPEN===i) closeExDrop(); },150);
+        EX_BLUR_TIMER=setTimeout(()=>{ if(EXOPEN===i) closeExDrop(); },300);
       };
       i.addEventListener('keydown',ev=>{
         if(ev.key==='Escape'){ closeExDrop(); i.blur(); }
