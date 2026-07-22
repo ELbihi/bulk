@@ -137,6 +137,24 @@
   .pday li b{font-weight:500}
   .pday li span{color:var(--amber-text);font-family:var(--mono);font-size:15px;white-space:nowrap;font-weight:600}
   /* food */
+  .calc-head{display:flex;justify-content:space-between;align-items:center;cursor:pointer}
+  .calc-head h2{margin-bottom:0}
+  .calc-chevron{width:16px;height:16px;stroke:var(--dim);fill:none;stroke-width:2;transition:transform .2s;flex-shrink:0}
+  .calc-body{margin-top:12px}
+  .calc-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px}
+  .calc-grid label{display:block;color:var(--dim);font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px}
+  .calc-grid input{font-family:var(--mono)}
+  .pill-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+  .calc-pill{flex:1;min-width:80px;min-height:44px;padding:8px 10px;background:var(--card2);color:var(--steel);font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;border-radius:8px;border:1px solid var(--line);cursor:pointer}
+  .calc-pill.active{background:var(--amber);color:var(--amber-ink);border-color:var(--amber)}
+  select#calcActivity{margin-bottom:10px}
+  .calc-error{color:var(--red);font-size:12px;min-height:16px;margin-bottom:4px}
+  .calc-results{margin-top:14px;border-top:1px solid var(--line);padding-top:12px}
+  .calc-res-row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px dashed var(--dash);font-size:13px;color:var(--dim)}
+  .calc-res-row b{font-family:var(--mono);color:var(--ink);font-weight:700}
+  .calc-res-big{text-align:center;padding:14px 0;margin-bottom:4px}
+  .calc-res-big span{display:block;color:var(--dim);font-size:11px;text-transform:uppercase;letter-spacing:.08em;margin-bottom:2px}
+  .calc-res-big b{font-family:var(--mono);font-size:34px;color:var(--amber-text);font-weight:700}
   .kcalring-wrap{position:relative;width:170px;height:170px;margin:6px auto 4px}
   .kcalring{width:100%;height:100%;transform:rotate(-90deg)}
   .kcalring-track{fill:none;stroke:var(--card2);stroke-width:12}
@@ -358,6 +376,47 @@
 
   <!-- ══════════ FOOD TAB ══════════ -->
   <section class="tab" id="tab-food">
+    <div class="card" id="calcCard">
+      <div class="calc-head" id="calcHead"><h2>🎯 Calculate my target</h2><svg class="calc-chevron" id="calcChevron" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="calc-body" id="calcBody" style="display:none">
+        <div class="calc-grid">
+          <div><label>Weight (kg)</label><input type="number" id="calcW" placeholder="80"></div>
+          <div><label>Height (cm)</label><input type="number" id="calcH" placeholder="178"></div>
+          <div><label>Age</label><input type="number" id="calcAge" placeholder="25"></div>
+        </div>
+        <div class="pill-row" id="calcSexRow">
+          <button class="calc-pill" data-sex="m">Male</button>
+          <button class="calc-pill" data-sex="f">Female</button>
+        </div>
+        <select id="calcActivity">
+          <option value="1.2">Sedentary ×1.2</option>
+          <option value="1.375">Light (1–3 workouts/wk) ×1.375</option>
+          <option value="1.55">Moderate (3–5 workouts/wk) ×1.55</option>
+          <option value="1.725">Very active (6–7 workouts/wk) ×1.725</option>
+        </select>
+        <div class="pill-row" id="calcGoalRow">
+          <button class="calc-pill" data-goal="lose">Lose</button>
+          <button class="calc-pill" data-goal="maintain">Maintain</button>
+          <button class="calc-pill" data-goal="gain">Gain</button>
+        </div>
+        <div class="pill-row" id="calcPaceRow" style="display:none">
+          <button class="calc-pill" data-pace="250">Slow ±250</button>
+          <button class="calc-pill" data-pace="400">Normal ±400</button>
+          <button class="calc-pill" data-pace="550">Fast ±550</button>
+        </div>
+        <p class="calc-error" id="calcError"></p>
+        <button class="btn ghost sm" id="calcComputeBtn" style="width:100%">Calculate</button>
+        <div class="calc-results" id="calcResults" style="display:none">
+          <div class="calc-res-row"><span>BMR</span><b id="calcBMR"></b></div>
+          <div class="calc-res-row"><span>TDEE (maintenance)</span><b id="calcTDEE"></b></div>
+          <div class="calc-res-big"><span>Target</span><b id="calcTarget"></b></div>
+          <div class="calc-res-row"><span>Protein</span><b id="calcResP"></b></div>
+          <div class="calc-res-row"><span>Carbs</span><b id="calcResC"></b></div>
+          <div class="calc-res-row"><span>Fats</span><b id="calcResF"></b></div>
+          <button class="btn" id="calcApplyBtn">Apply to my targets</button>
+        </div>
+      </div>
+    </div>
     <div class="card">
       <h2>Today's calories</h2>
       <div class="kcalring-wrap">
@@ -373,9 +432,9 @@
       <div class="kcalring-chip" id="kcalLeft"></div>
       <div class="macro">
         <div><b id="tKcal">2800</b><small>kcal target</small></div>
-        <div><b>135</b><small>~g protein</small><div class="mbar-track"><i class="mbar-fill" data-m="p"></i></div></div>
-        <div><b>380</b><small>~g carbs</small><div class="mbar-track"><i class="mbar-fill" data-m="c"></i></div></div>
-        <div><b>75</b><small>~g fats</small><div class="mbar-track"><i class="mbar-fill" data-m="f"></i></div></div>
+        <div><b id="macroP">135</b><small>~g protein</small><div class="mbar-track"><i class="mbar-fill" data-m="p"></i></div></div>
+        <div><b id="macroC">380</b><small>~g carbs</small><div class="mbar-track"><i class="mbar-fill" data-m="c"></i></div></div>
+        <div><b id="macroF">75</b><small>~g fats</small><div class="mbar-track"><i class="mbar-fill" data-m="f"></i></div></div>
       </div>
       <p class="muted">Not gaining after 2 weeks? Bump the kcal target:</p>
       <div class="addrow">
@@ -535,7 +594,7 @@ const DEFAULT_MEALS = [
   {id:"m6",name:"Before bed",time:"22:30",kcal:150},
 ];
 
-let DB = {sessions:[], weights:[], kcalTarget:2800, food:{}, program:null, activeSplitName:null, meals:null, mealLog:{}, targetKg:63};
+let DB = {sessions:[], weights:[], kcalTarget:2800, food:{}, program:null, activeSplitName:null, meals:null, mealLog:{}, targetKg:63, macroTargets:null, calcProfile:null};
 const PROG = () => DB.program || DEFAULT_PROGRAM;
 const MEALS = () => DB.meals || DEFAULT_MEALS;
 const todayKey = () => new Date().toISOString().slice(0,10);
@@ -802,7 +861,7 @@ document.getElementById('saveSession').onclick = async ()=>{
   DB.sessions.push({date:todayKey(),day:di,ex});
   await save();
   HIST_SHOWN=14;
-  renderHist(); renderPR(); renderMilestones(); drawLogArea();
+  renderHist(); renderPR(); renderMilestones();
   const dayName=(PROG()[di]||{day:'Session'}).day;
   toast(`Session saved — ${dayName} · ${todayKey()} · volume ${Math.round(vol)} kg · ${setsDone}/${setsTotal} sets done`);
 };
@@ -869,6 +928,10 @@ function renderFood(){
   ring.style.strokeDashoffset = C*(1-pct);
   ring.style.stroke = now>=DB.kcalTarget ? 'var(--green)' : 'var(--amber)';
   document.querySelectorAll('.mbar-fill').forEach(el=>el.style.width=(pct*100)+'%');
+  const mt = DB.macroTargets || {p:135,c:380,f:75};
+  document.getElementById('macroP').textContent = mt.p;
+  document.getElementById('macroC').textContent = mt.c;
+  document.getElementById('macroF').textContent = mt.f;
   renderMeals();
 }
 document.getElementById('addKcal').onclick = async ()=>{
@@ -882,6 +945,101 @@ document.getElementById('setKcal').onclick = async ()=>{
   const v=+document.getElementById('kcalTarget').value; if(v<1800||v>5000){toast('Enter 1800–5000');return}
   DB.kcalTarget=v; document.getElementById('kcalTarget').value='';
   await save(); renderFood(); toast('Target updated');
+};
+
+/* ── calorie target calculator ── */
+let CALC_LAST=null;
+function selectCalcPill(rowId,key,val){
+  document.querySelectorAll('#'+rowId+' .calc-pill').forEach(b=>{
+    b.classList.toggle('active', b.dataset[key]===String(val));
+  });
+}
+function updateCalcChevron(open){
+  const c=document.getElementById('calcChevron');
+  if(c) c.style.transform = open?'rotate(180deg)':'rotate(0deg)';
+}
+function initCalcCard(){
+  const has = !!DB.calcProfile;
+  document.getElementById('calcBody').style.display = has ? 'none' : 'block';
+  updateCalcChevron(!has);
+  if(has){
+    const p=DB.calcProfile;
+    document.getElementById('calcW').value=p.w;
+    document.getElementById('calcH').value=p.h;
+    document.getElementById('calcAge').value=p.age;
+    selectCalcPill('calcSexRow','sex',p.sex);
+    document.getElementById('calcActivity').value=p.activity;
+    selectCalcPill('calcGoalRow','goal',p.goal);
+    if(p.goal!=='maintain'){
+      document.getElementById('calcPaceRow').style.display='flex';
+      selectCalcPill('calcPaceRow','pace',p.pace);
+    }
+  }
+}
+document.getElementById('calcHead').onclick=()=>{
+  const body=document.getElementById('calcBody');
+  const open = body.style.display==='none';
+  body.style.display = open?'block':'none';
+  updateCalcChevron(open);
+};
+document.querySelectorAll('#calcSexRow .calc-pill').forEach(b=>b.onclick=()=>selectCalcPill('calcSexRow','sex',b.dataset.sex));
+document.querySelectorAll('#calcGoalRow .calc-pill').forEach(b=>b.onclick=()=>{
+  selectCalcPill('calcGoalRow','goal',b.dataset.goal);
+  document.getElementById('calcPaceRow').style.display = b.dataset.goal==='maintain' ? 'none' : 'flex';
+});
+document.querySelectorAll('#calcPaceRow .calc-pill').forEach(b=>b.onclick=()=>selectCalcPill('calcPaceRow','pace',b.dataset.pace));
+document.getElementById('calcComputeBtn').onclick=()=>{
+  const err=document.getElementById('calcError');
+  err.textContent='';
+  const w=+document.getElementById('calcW').value;
+  const h=+document.getElementById('calcH').value;
+  const age=+document.getElementById('calcAge').value;
+  const sexBtn=document.querySelector('#calcSexRow .calc-pill.active');
+  const activity=+document.getElementById('calcActivity').value;
+  const goalBtn=document.querySelector('#calcGoalRow .calc-pill.active');
+  const paceBtn=document.querySelector('#calcPaceRow .calc-pill.active');
+  if(!w||w<30||w>250){err.textContent='Enter a valid weight (30–250 kg)';return}
+  if(!h||h<120||h>230){err.textContent='Enter a valid height (120–230 cm)';return}
+  if(!age||age<13||age>100){err.textContent='Enter a valid age (13–100)';return}
+  if(!sexBtn){err.textContent='Select male or female';return}
+  if(!goalBtn){err.textContent='Select a goal';return}
+  const goal=goalBtn.dataset.goal;
+  if(goal!=='maintain' && !paceBtn){err.textContent='Select a pace';return}
+  const sex=sexBtn.dataset.sex;
+  const pace=paceBtn?+paceBtn.dataset.pace:0;
+
+  const bmr = 10*w + 6.25*h - 5*age + (sex==='m'?5:-161);
+  const tdee = bmr*activity;
+  let target = tdee;
+  if(goal==='lose') target = tdee-pace;
+  if(goal==='gain') target = tdee+pace;
+  target = Math.round(target/50)*50;
+
+  const protein = Math.round(2*w);
+  const fats = Math.round((target*0.25)/9);
+  const carbsKcal = Math.max(0, target - protein*4 - fats*9);
+  const carbs = Math.round(carbsKcal/4);
+
+  document.getElementById('calcBMR').textContent = Math.round(bmr)+' kcal';
+  document.getElementById('calcTDEE').textContent = Math.round(tdee)+' kcal';
+  document.getElementById('calcTarget').textContent = target+' kcal';
+  document.getElementById('calcResP').textContent = protein+' g';
+  document.getElementById('calcResC').textContent = carbs+' g';
+  document.getElementById('calcResF').textContent = fats+' g';
+  document.getElementById('calcResults').style.display='block';
+
+  CALC_LAST = {target,protein,carbs,fats,w,h,age,sex,activity,goal,pace};
+};
+document.getElementById('calcApplyBtn').onclick = async ()=>{
+  if(!CALC_LAST)return;
+  DB.kcalTarget = CALC_LAST.target;
+  DB.macroTargets = {p:CALC_LAST.protein, c:CALC_LAST.carbs, f:CALC_LAST.fats};
+  DB.calcProfile = {w:CALC_LAST.w, h:CALC_LAST.h, age:CALC_LAST.age, sex:CALC_LAST.sex, activity:CALC_LAST.activity, goal:CALC_LAST.goal, pace:CALC_LAST.pace};
+  await save();
+  renderFood();
+  toast('Targets updated — '+CALC_LAST.target+' kcal');
+  document.getElementById('calcBody').style.display='none';
+  updateCalcChevron(false);
 };
 
 /* ── scheduled meals ── */
@@ -1167,7 +1325,7 @@ async function resetProgram(){
   DB.program=null; DB.activeSplitName=null; DRAFT=null; await save(); drawEditor(); renderProgram(); renderLogger(); toast('Default restored');
 }
 
-function renderAll(){renderProgram();renderLogger();renderHist();renderFood();renderWeight();renderPR();renderMassHeader();renderMilestones()}
+function renderAll(){renderProgram();renderLogger();renderHist();renderFood();renderWeight();renderPR();renderMassHeader();renderMilestones();initCalcCard()}
 
 /* ── backup export / import ── */
 document.getElementById('exportBtn').onclick=()=>{
