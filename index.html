@@ -219,6 +219,20 @@
   .scan-low-warn{color:var(--red);font-size:12px;margin-bottom:10px}
   .scan-actions{display:flex;gap:8px}
   .scan-actions .btn{margin-top:0}
+  .scan-tabs{display:flex;gap:6px;background:var(--card2);border:1px solid var(--line);border-radius:10px;padding:4px;margin-bottom:12px}
+  .scan-tab{flex:1;text-align:center;padding:8px 6px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--dim);border-radius:7px;cursor:pointer;min-height:40px;display:flex;align-items:center;justify-content:center;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+  .scan-tab.active{background:var(--amber);color:var(--amber-ink)}
+  .scan-note-input{margin-top:8px;font-size:15px}
+  .scan-describe textarea{width:100%;min-height:88px;background:var(--card2);border:1px solid var(--line);border-radius:8px;color:var(--ink);padding:10px;font-size:16px;font-family:var(--body);resize:vertical}
+  .scan-photo-row{display:flex;flex-direction:column;align-items:center;gap:10px;padding:16px 0;text-align:center}
+  .scan-photo-row svg{width:34px;height:34px;stroke:var(--amber-text);fill:none;stroke-width:1.6}
+  .scan-photo-row p{color:var(--dim);font-size:12.5px}
+  .ai-chips-row{display:flex;gap:8px;overflow-x:auto;padding-bottom:2px;margin-bottom:8px;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
+  .ai-chips-row::-webkit-scrollbar{display:none}
+  .ai-chip{flex-shrink:0;display:flex;align-items:center;gap:6px;padding:7px 12px;background:var(--card2);border:1px solid var(--line);border-radius:999px;font-size:11.5px;color:var(--dim);white-space:nowrap;cursor:pointer;min-height:36px;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+  .ai-chip:active{background:var(--highest)}
+  .ai-chip b{font-family:var(--mono);color:var(--amber-text);font-weight:700}
+  .ai-chips-label{color:var(--dim);font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;margin:2px 0 6px}
   .addrow{display:grid;grid-template-columns:1fr auto;gap:8px;margin-top:8px}
   .addrow .btn{margin-top:0;width:auto}
   /* progress */
@@ -514,9 +528,9 @@
       <div class="kcalring-chip" id="kcalLeft"></div>
       <div class="macro">
         <div><b id="tKcal">2800</b><small>kcal target</small></div>
-        <div><b id="macroP">135</b><small>~g protein</small><div class="mbar-track"><i class="mbar-fill" data-m="p"></i></div></div>
-        <div><b id="macroC">380</b><small>~g carbs</small><div class="mbar-track"><i class="mbar-fill" data-m="c"></i></div></div>
-        <div><b id="macroF">75</b><small>~g fats</small><div class="mbar-track"><i class="mbar-fill" data-m="f"></i></div></div>
+        <div><b id="macroP">0</b><small id="macroPLabel">of 135g protein</small><div class="mbar-track"><i class="mbar-fill" data-m="p"></i></div></div>
+        <div><b id="macroC">0</b><small id="macroCLabel">of 380g carbs</small><div class="mbar-track"><i class="mbar-fill" data-m="c"></i></div></div>
+        <div><b id="macroF">0</b><small id="macroFLabel">of 75g fats</small><div class="mbar-track"><i class="mbar-fill" data-m="f"></i></div></div>
       </div>
       <p class="muted">Not gaining after 2 weeks? Bump the kcal target:</p>
       <div class="addrow">
@@ -527,7 +541,20 @@
         <input type="number" id="kcalAdd" placeholder="Add kcal..." inputmode="numeric">
         <button class="btn sm" id="addKcal">+ Add</button>
       </div>
-      <button class="btn ghost sm" id="scanMealBtn">📸 Scan meal</button>
+      <div class="addrow">
+        <input type="number" id="proteinAdd" placeholder="Add protein (g)..." inputmode="numeric">
+        <button class="btn sm" id="addProtein">+ Add</button>
+      </div>
+      <div class="addrow">
+        <input type="number" id="carbsAdd" placeholder="Add carbs (g)..." inputmode="numeric">
+        <button class="btn sm" id="addCarbs">+ Add</button>
+      </div>
+      <div class="addrow">
+        <input type="number" id="fatsAdd" placeholder="Add fats (g)..." inputmode="numeric">
+        <button class="btn sm" id="addFats">+ Add</button>
+      </div>
+      <div id="aiMealChips" style="display:none"></div>
+      <button class="btn ghost sm" id="scanMealBtn">🍽️ AI meal</button>
       <input type="file" id="scanFileInput" accept="image/*" capture="environment" style="display:none">
       <button class="btn ghost sm" id="resetKcal">Reset day</button>
       <div id="scanPanel" style="display:none"></div>
@@ -682,7 +709,7 @@ const DEFAULT_MEALS = [
 const PERF = new URLSearchParams(location.search).get('perf')==='1';
 function perfStart(label){ if(PERF) console.time(label); }
 function perfEnd(label){ if(PERF) console.timeEnd(label); }
-let DB = {sessions:[], weights:[], kcalTarget:2800, food:{}, program:null, activeSplitName:null, meals:null, mealLog:{}, targetKg:63, macroTargets:null, calcProfile:null};
+let DB = {sessions:[], weights:[], kcalTarget:2800, food:{}, macros:{}, program:null, activeSplitName:null, meals:null, mealLog:{}, targetKg:63, macroTargets:null, calcProfile:null, recentAiMeals:[]};
 const PROG = () => DB.program || DEFAULT_PROGRAM;
 const MEALS = () => DB.meals || DEFAULT_MEALS;
 const todayKey = () => new Date().toISOString().slice(0,10);
@@ -1040,12 +1067,32 @@ function renderFood(){
   ring.style.strokeDasharray = C;
   ring.style.strokeDashoffset = C*(1-pct);
   ring.style.stroke = now>=DB.kcalTarget ? 'var(--green)' : 'var(--amber)';
-  document.querySelectorAll('.mbar-fill').forEach(el=>el.style.width=(pct*100)+'%');
   const mt = DB.macroTargets || {p:135,c:380,f:75};
-  document.getElementById('macroP').textContent = mt.p;
-  document.getElementById('macroC').textContent = mt.c;
-  document.getElementById('macroF').textContent = mt.f;
+  const tm = todayMacros();
+  document.getElementById('macroP').textContent = tm.protein;
+  document.getElementById('macroC').textContent = tm.carbs;
+  document.getElementById('macroF').textContent = tm.fats;
+  document.getElementById('macroPLabel').textContent = 'of '+mt.p+'g protein';
+  document.getElementById('macroCLabel').textContent = 'of '+mt.c+'g carbs';
+  document.getElementById('macroFLabel').textContent = 'of '+mt.f+'g fats';
+  document.querySelector('.mbar-fill[data-m="p"]').style.width = (Math.max(0,Math.min(1,tm.protein/mt.p))*100)+'%';
+  document.querySelector('.mbar-fill[data-m="c"]').style.width = (Math.max(0,Math.min(1,tm.carbs/mt.c))*100)+'%';
+  document.querySelector('.mbar-fill[data-m="f"]').style.width = (Math.max(0,Math.min(1,tm.fats/mt.f))*100)+'%';
   renderMeals();
+  renderAiChips();
+}
+function todayMacros(){
+  return DB.macros[todayKey()] || {protein:0,carbs:0,fats:0};
+}
+async function addMacros(protein,carbs,fats){
+  const dk=todayKey();
+  const cur=DB.macros[dk] || {protein:0,carbs:0,fats:0};
+  DB.macros[dk] = {
+    protein: cur.protein + (protein||0),
+    carbs: cur.carbs + (carbs||0),
+    fats: cur.fats + (fats||0),
+  };
+  await save(); renderFood();
 }
 document.getElementById('addKcal').onclick = async ()=>{
   const v=+document.getElementById('kcalAdd').value; if(!v)return;
@@ -1053,16 +1100,34 @@ document.getElementById('addKcal').onclick = async ()=>{
   document.getElementById('kcalAdd').value='';
   await save(); renderFood();
 };
-document.getElementById('resetKcal').onclick = async ()=>{DB.food[todayKey()]=0;await save();renderFood()};
+document.getElementById('addProtein').onclick = async ()=>{
+  const v=+document.getElementById('proteinAdd').value; if(!v)return;
+  document.getElementById('proteinAdd').value='';
+  await addMacros(v,0,0);
+};
+document.getElementById('addCarbs').onclick = async ()=>{
+  const v=+document.getElementById('carbsAdd').value; if(!v)return;
+  document.getElementById('carbsAdd').value='';
+  await addMacros(0,v,0);
+};
+document.getElementById('addFats').onclick = async ()=>{
+  const v=+document.getElementById('fatsAdd').value; if(!v)return;
+  document.getElementById('fatsAdd').value='';
+  await addMacros(0,0,v);
+};
+document.getElementById('resetKcal').onclick = async ()=>{DB.food[todayKey()]=0;DB.macros[todayKey()]={protein:0,carbs:0,fats:0};await save();renderFood()};
 document.getElementById('setKcal').onclick = async ()=>{
   const v=+document.getElementById('kcalTarget').value; if(v<1800||v>5000){toast('Enter 1800–5000');return}
   DB.kcalTarget=v; document.getElementById('kcalTarget').value='';
   await save(); renderFood(); toast('Target updated');
 };
 
-/* ── AI food photo scan ── */
+/* ── AI meal estimator (photo + text) ── */
 const EDGE_FUNCTION_URL='https://uygfgmvotznsbtkngpeb.functions.supabase.co/estimate-food';
 let SCAN_LAST=null;
+let SCAN_TAB='photo'; // 'photo' | 'describe'
+let SCAN_NOTE='';
+let SCAN_DESCRIBE_TEXT='';
 function downscaleImageToBase64(file){
   return new Promise((resolve,reject)=>{
     const reader=new FileReader();
@@ -1087,7 +1152,7 @@ function downscaleImageToBase64(file){
     reader.readAsDataURL(file);
   });
 }
-async function callEstimateFood(base64){
+async function callEstimateFood(payload){
   const token=SESSION && SESSION.access_token;
   const controller=new AbortController();
   const timer=setTimeout(()=>controller.abort(),30000);
@@ -1096,7 +1161,7 @@ async function callEstimateFood(base64){
     res=await fetch(EDGE_FUNCTION_URL,{
       method:'POST',
       headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},
-      body:JSON.stringify({image:base64}),
+      body:JSON.stringify(payload),
       signal:controller.signal
     });
   }catch(e){
@@ -1109,6 +1174,53 @@ async function callEstimateFood(base64){
   if(!res.ok) throw new Error((data && data.error) || ('Scan failed ('+res.status+')'));
   return data;
 }
+function scanPanelShell(){
+  return `
+    <div class="scan-tabs">
+      <div class="scan-tab ${SCAN_TAB==='photo'?'active':''}" id="scanTabPhoto">Photo</div>
+      <div class="scan-tab ${SCAN_TAB==='describe'?'active':''}" id="scanTabDescribe">Describe</div>
+    </div>
+    <div id="scanTabBody"></div>`;
+}
+function renderScanTabBody(){
+  const body=document.getElementById('scanTabBody');
+  if(!body)return;
+  if(SCAN_TAB==='photo'){
+    body.innerHTML=`
+      <div class="scan-photo-row">
+        <svg viewBox="0 0 24 24"><path d="M4 7h3l2-2h6l2 2h3v13H4V7z"/><circle cx="12" cy="13" r="3.5"/></svg>
+        <p>Take or choose a photo of your meal</p>
+        <button class="btn sm" id="scanTakePhotoBtn" style="width:100%">Take photo</button>
+      </div>
+      <input type="text" class="scan-note-input" id="scanNoteInput" placeholder="Add a note (optional) — e.g. 'no oil', 'large portion'" value="${SCAN_NOTE.replace(/"/g,'&quot;')}">`;
+    document.getElementById('scanTakePhotoBtn').onclick=()=>document.getElementById('scanFileInput').click();
+    document.getElementById('scanNoteInput').oninput=(ev)=>{SCAN_NOTE=ev.target.value;};
+  } else {
+    body.innerHTML=`
+      <div class="scan-describe">
+        <textarea id="scanDescribeInput" placeholder="e.g. rice 150g, chicken 200g, olive oil… / 2 msemen + honey + lben">${SCAN_DESCRIBE_TEXT.replace(/</g,'&lt;')}</textarea>
+      </div>
+      <button class="btn sm" id="scanEstimateBtn" style="width:100%">Estimate</button>`;
+    document.getElementById('scanDescribeInput').oninput=(ev)=>{SCAN_DESCRIBE_TEXT=ev.target.value;};
+    document.getElementById('scanEstimateBtn').onclick=onEstimateFromText;
+  }
+}
+function switchScanTab(tab){
+  SCAN_TAB=tab;
+  const photoTab=document.getElementById('scanTabPhoto'), descTab=document.getElementById('scanTabDescribe');
+  if(photoTab) photoTab.classList.toggle('active',tab==='photo');
+  if(descTab) descTab.classList.toggle('active',tab==='describe');
+  renderScanTabBody();
+}
+function openScanPanel(keepTab){
+  if(!keepTab) SCAN_TAB='photo';
+  const panel=document.getElementById('scanPanel');
+  panel.style.display='block';
+  panel.innerHTML=scanPanelShell();
+  renderScanTabBody();
+  document.getElementById('scanTabPhoto').onclick=()=>switchScanTab('photo');
+  document.getElementById('scanTabDescribe').onclick=()=>switchScanTab('describe');
+}
 function showScanLoading(){
   const panel=document.getElementById('scanPanel');
   panel.style.display='block';
@@ -1118,16 +1230,22 @@ function closeScanPanel(){
   document.getElementById('scanPanel').style.display='none';
   document.getElementById('scanPanel').innerHTML='';
   SCAN_LAST=null;
+  SCAN_NOTE=''; SCAN_DESCRIBE_TEXT='';
 }
-function retakeScan(){
-  closeScanPanel();
-  document.getElementById('scanFileInput').click();
+function retryScan(){
+  openScanPanel(true); // reopen on whichever tab was last used, keeping typed text
 }
 function showScanError(msg){
   const panel=document.getElementById('scanPanel');
   panel.style.display='block';
-  panel.innerHTML=`<div class="scan-error">${msg}</div><div class="scan-actions"><button class="btn ghost sm" id="scanRetryBtn" style="flex:1">Retake</button></div>`;
-  document.getElementById('scanRetryBtn').onclick=retakeScan;
+  panel.innerHTML=`<div class="scan-error">${msg}</div><div class="scan-actions"><button class="btn ghost sm" id="scanRetryBtn" style="flex:1">Retry</button></div>`;
+  document.getElementById('scanRetryBtn').onclick=retryScan;
+}
+function pushRecentAiMeal(data,kcal){
+  const items=Array.isArray(data.items)?data.items:[];
+  let label=items.map(it=>it.name).filter(Boolean).join('+') || 'Meal';
+  if(label.length>28) label=label.slice(0,26)+'…';
+  DB.recentAiMeals=[{label,kcal},...(DB.recentAiMeals||[])].slice(0,5);
 }
 function showScanResult(data){
   SCAN_LAST=data;
@@ -1135,6 +1253,7 @@ function showScanResult(data){
   const items=Array.isArray(data.items)?data.items:[];
   const itemsHtml=items.map(it=>`<div class="scan-item"><div><div class="scan-item-name">${it.name||'Item'}</div><span class="scan-item-portion">${it.portion||''}</span></div><div class="scan-item-kcal">${it.kcal||0} kcal</div></div>`).join('');
   const total=+data.total_kcal||0;
+  const protein=+data.protein_g||0, carbs=+data.carbs_g||0, fats=+data.fats_g||0;
   const panel=document.getElementById('scanPanel');
   panel.style.display='block';
   panel.innerHTML=`
@@ -1142,11 +1261,12 @@ function showScanResult(data){
     ${conf==='low'?'<div class="scan-low-warn">Rough estimate — double-check before adding.</div>':''}
     <div class="scan-items">${itemsHtml || '<div class="muted">No items detected.</div>'}</div>
     <div class="scan-total-row">
-      <span class="scan-total-label">Total kcal</span>
+      <span class="scan-total-label">Total kcal (edit if needed)</span>
       <input type="number" inputmode="numeric" class="scan-total-input" id="scanTotalInput" value="${total}">
     </div>
+    <p class="muted" style="text-align:center;margin-bottom:8px">Protein ${protein}g · Carbs ${carbs}g · Fats ${fats}g</p>
     <div class="scan-actions">
-      <button class="btn ghost sm" id="scanRetakeBtn" style="flex:1">Retake</button>
+      <button class="btn ghost sm" id="scanRetryBtn" style="flex:1">Retry</button>
       <button class="btn sm" id="scanAddBtn" style="flex:1">Add ${total} kcal</button>
     </div>`;
   const totalInput=document.getElementById('scanTotalInput');
@@ -1156,31 +1276,65 @@ function showScanResult(data){
     const v=+totalInput.value||0;
     if(!v){toast('Enter a valid kcal amount');return}
     DB.food[todayKey()]=(DB.food[todayKey()]||0)+v;
+    const dk=todayKey();
+    const curMacros=DB.macros[dk] || {protein:0,carbs:0,fats:0};
+    DB.macros[dk] = {protein:curMacros.protein+protein, carbs:curMacros.carbs+carbs, fats:curMacros.fats+fats};
+    pushRecentAiMeal(data,v);
     await save(); renderFood();
     closeScanPanel();
-    toast('Added '+v+' kcal from scan ✓');
+    toast('Added '+v+' kcal ✓');
   };
-  document.getElementById('scanRetakeBtn').onclick=retakeScan;
+  document.getElementById('scanRetryBtn').onclick=retryScan;
 }
 document.getElementById('scanMealBtn').onclick=()=>{
   const client=sb();
-  if(!client || !SESSION){ toast('Sign in to use meal scanning'); return; }
-  if(!navigator.onLine){ toast('Scan needs a connection'); return; }
-  document.getElementById('scanFileInput').click();
+  if(!client || !SESSION){ toast('Sign in to use the AI meal estimator'); return; }
+  openScanPanel(false);
 };
 document.getElementById('scanFileInput').onchange=async(ev)=>{
   const file=ev.target.files[0];
   ev.target.value='';
   if(!file)return;
+  if(!navigator.onLine){ toast('Scan needs a connection'); return; }
   showScanLoading();
   try{
     const base64=await downscaleImageToBase64(file);
-    const data=await callEstimateFood(base64);
+    const payload={image:base64};
+    if(SCAN_NOTE.trim()) payload.text=SCAN_NOTE.trim();
+    const data=await callEstimateFood(payload);
     showScanResult(data);
   }catch(e){
     showScanError((e && e.message) || 'Could not analyze this photo. Try again.');
   }
 };
+async function onEstimateFromText(){
+  const text=SCAN_DESCRIBE_TEXT.trim();
+  if(!text){ toast('Describe your meal first'); return; }
+  if(!navigator.onLine){ toast('Scan needs a connection'); return; }
+  showScanLoading();
+  try{
+    const data=await callEstimateFood({text});
+    showScanResult(data);
+  }catch(e){
+    showScanError((e && e.message) || 'Could not estimate that. Try again.');
+  }
+}
+function renderAiChips(){
+  const wrap=document.getElementById('aiMealChips');
+  if(!wrap)return;
+  const list=DB.recentAiMeals||[];
+  if(!list.length){ wrap.style.display='none'; wrap.innerHTML=''; return; }
+  wrap.style.display='block';
+  wrap.innerHTML=`<div class="ai-chips-label">Recent</div><div class="ai-chips-row">${list.map((m,i)=>`<div class="ai-chip" data-i="${i}">${m.label} <b>${m.kcal}</b></div>`).join('')}</div>`;
+  wrap.querySelectorAll('.ai-chip').forEach(chip=>{
+    chip.onclick=async()=>{
+      const m=DB.recentAiMeals[+chip.dataset.i]; if(!m)return;
+      DB.food[todayKey()]=(DB.food[todayKey()]||0)+m.kcal;
+      await save(); renderFood();
+      toast('Added '+m.kcal+' kcal ✓');
+    };
+  });
+}
 
 /* ── calorie target calculator ── */
 let CALC_LAST=null;
