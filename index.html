@@ -6,6 +6,8 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png">
 <meta name="theme-color" content="#1a1c21">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
@@ -206,7 +208,7 @@
   .mass-value{font-family:var(--mono);font-weight:700;font-size:28px;color:var(--ink)}
   .mass-value.target{color:var(--amber-text);cursor:pointer;border-bottom:1px dashed var(--amber-text)}
   .mass-bar{height:8px;background:var(--card2);border-radius:999px;overflow:hidden;margin:6px 0}
-  .mass-bar i{display:block;height:100%;background:var(--amber);width:0%;transition:width .3s}
+  .mass-bar i{display:block;height:100%;width:100%;background:var(--amber);transform:scaleX(0);transform-origin:left;transition:transform .3s}
   .mass-sub{display:flex;justify-content:space-between;color:var(--dim);font-size:11px;text-transform:uppercase;letter-spacing:.04em}
   svg.chart{width:100%;height:170px;background:var(--card2);border:1px solid var(--line);border-radius:12px}
   table.pr{width:100%;border-collapse:collapse;font-size:14px}
@@ -293,14 +295,14 @@
   .splash-logo svg{width:32px;height:32px;stroke:var(--amber-text);fill:none;stroke-width:1.8}
   .splash-name{font-family:var(--disp);font-weight:800;font-size:20px;letter-spacing:.5px;text-transform:uppercase;color:var(--ink);opacity:0;animation:splashFadeIn .3s ease forwards;animation-delay:.35s}
   .splash-bar-track{width:120px;height:2px;background:var(--line);border-radius:2px;overflow:hidden;margin-top:2px;opacity:0;animation:splashFadeIn .3s ease forwards;animation-delay:.35s}
-  .splash-bar-track i{display:block;height:100%;width:0%;background:var(--amber);animation:splashBarFill 1.6s linear forwards;animation-delay:.4s}
+  .splash-bar-track i{display:block;height:100%;width:100%;background:var(--amber);transform:scaleX(0);transform-origin:left;animation:splashBarFill 1.6s linear forwards;animation-delay:.4s}
   @keyframes splashLogoIn{0%{opacity:0;transform:scale(.6)}60%{opacity:1;transform:scale(1.08)}100%{opacity:1;transform:scale(1)}}
   @keyframes splashFadeIn{to{opacity:1}}
-  @keyframes splashBarFill{to{width:100%}}
+  @keyframes splashBarFill{to{transform:scaleX(1)}}
   @media (prefers-reduced-motion: reduce){
     .splash-logo{animation:none;opacity:1;transform:scale(1)}
     .splash-name,.splash-bar-track{animation:none;opacity:1}
-    .splash-bar-track i{animation:none;width:100%}
+    .splash-bar-track i{animation:none;transform:scaleX(1)}
   }
 </style>
 
@@ -652,6 +654,9 @@ const DEFAULT_MEALS = [
   {id:"m6",name:"Before bed",time:"22:30",kcal:150},
 ];
 
+const PERF = new URLSearchParams(location.search).get('perf')==='1';
+function perfStart(label){ if(PERF) console.time(label); }
+function perfEnd(label){ if(PERF) console.timeEnd(label); }
 let DB = {sessions:[], weights:[], kcalTarget:2800, food:{}, program:null, activeSplitName:null, meals:null, mealLog:{}, targetKg:63, macroTargets:null, calcProfile:null};
 const PROG = () => DB.program || DEFAULT_PROGRAM;
 const MEALS = () => DB.meals || DEFAULT_MEALS;
@@ -664,12 +669,24 @@ async function load(){
   updateSyncDot();
   sync();
 }
-async function save(){
+let SAVE_DEBOUNCE_TIMER=null;
+function flushSaveNow(){
+  clearTimeout(SAVE_DEBOUNCE_TIMER);
+  SAVE_DEBOUNCE_TIMER=null;
   try{
     localStorage.setItem('bulk-db',JSON.stringify(DB));
     localStorage.setItem('bulk-updatedAt', new Date().toISOString());
   }catch(e){console.error('storage',e)}
   markDirty();
+}
+window.addEventListener('beforeunload',flushSaveNow);
+document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='hidden' && SAVE_DEBOUNCE_TIMER) flushSaveNow(); });
+async function save(){
+  // the actual write is debounced 300ms so rapid successive explicit actions
+  // (e.g. quick meal-log taps) coalesce into a single JSON.stringify + localStorage write;
+  // DB is already mutated in memory by the caller, so renders reading DB stay correct immediately
+  clearTimeout(SAVE_DEBOUNCE_TIMER);
+  SAVE_DEBOUNCE_TIMER=setTimeout(flushSaveNow,300);
 }
 
 /* ── tabs ── */
@@ -682,6 +699,7 @@ document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{
 
 /* ── program tab ── */
 function renderProgram(){
+  perfStart('renderProgram');
   const todayPrefix = new Date().toLocaleDateString('en-US',{weekday:'short'}).slice(0,3).toLowerCase();
   document.getElementById('splitChipRow').innerHTML = SPLIT_TEMPLATES.map(t=>
     `<button class="split-chip${DB.activeSplitName===t.name?' active':''}" data-split="${t.name.replace(/"/g,'&quot;')}">${t.name.replace(/\s*\(\d+d\)/,'')}</button>`
@@ -708,6 +726,7 @@ function renderProgram(){
     </div>`;
   }).join('');
   document.getElementById('programList').innerHTML = dayCards + `<div class="pday rest"><div class="pday-head" onclick="this.closest('.pday').classList.toggle('expanded')"><span class="pday-prefix">SUN</span><div class="pday-bar"></div><span class="pday-name">Rest</span><svg class="pday-chevron" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="pday-body"><ul><li><b>Sleep 7–9 h. Eat the same calories. Grow.</b><span>💤</span></li></ul></div></div>`;
+  perfEnd('renderProgram');
 }
 
 function openSplitPanel(){
@@ -751,7 +770,7 @@ async function applySplitTemplate(t){
 document.getElementById('splitBtn').onclick=openSplitPanel;
 
 /* ── logger ── */
-let SESSION_TIMER_START=null, SESSION_TIMER_IV=null, CHECK_TIMES=[];
+let SESSION_TIMER_START=null, SESSION_TIMER_IV=null, CHECK_TIMES=[], SESSION_TIMER_EL=null;
 function lastSessionFor(dayIdx){
   for(let i=DB.sessions.length-1;i>=0;i--) if(DB.sessions[i].day===dayIdx) return DB.sessions[i];
   return null;
@@ -790,6 +809,7 @@ function updateSessionHeader(){
   if(dateEl) dateEl.textContent = formatHeaderDate(new Date());
 }
 function renderLogger(){
+  perfStart('renderLogger');
   const sel = document.getElementById('daySelect');
   sel.innerHTML = PROG().map((p,i)=>`<option value="${i}">${p.day}</option>`).join('');
   MANUAL_DAY_OVERRIDE=false;
@@ -798,10 +818,12 @@ function renderLogger(){
   sel.onchange = ()=>{MANUAL_DAY_OVERRIDE=true;resetSessionTimer();drawLogArea();updateSessionHeader();closeExDrop()};
   drawLogArea();
   updateSessionHeader();
+  perfEnd('renderLogger');
 }
 function startSessionTimerIfNeeded(){
   if(SESSION_TIMER_START)return;
   SESSION_TIMER_START=Date.now();
+  if(!SESSION_TIMER_EL) SESSION_TIMER_EL=document.getElementById('sessionTimer');
   const wrap=document.getElementById('sessionTimerWrap'); if(wrap) wrap.classList.add('live');
   SESSION_TIMER_IV=setInterval(tickSessionTimer,1000);
   tickSessionTimer();
@@ -810,14 +832,14 @@ function tickSessionTimer(){
   if(!SESSION_TIMER_START)return;
   const secs=Math.floor((Date.now()-SESSION_TIMER_START)/1000);
   const m=Math.floor(secs/60), s=secs%60;
-  const el=document.getElementById('sessionTimer');
-  if(el) el.textContent=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+  if(SESSION_TIMER_EL) SESSION_TIMER_EL.textContent=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
 }
 function resetSessionTimer(){
   clearInterval(SESSION_TIMER_IV);
   SESSION_TIMER_START=null; SESSION_TIMER_IV=null; CHECK_TIMES=[];
   const wrap=document.getElementById('sessionTimerWrap'); if(wrap) wrap.classList.remove('live');
-  const el=document.getElementById('sessionTimer'); if(el) el.textContent='00:00';
+  if(!SESSION_TIMER_EL) SESSION_TIMER_EL=document.getElementById('sessionTimer');
+  if(SESSION_TIMER_EL) SESSION_TIMER_EL.textContent='00:00';
 }
 function toggleExCard(ei){
   const card=document.querySelector('.ex[data-exi="'+ei+'"]');
@@ -881,6 +903,7 @@ function updateBento(){
   }
 }
 function drawLogArea(){
+  perfStart('drawLogArea');
   const di = +document.getElementById('daySelect').value;
   const last = lastSessionFor(di);
   const area = document.getElementById('logArea');
@@ -904,6 +927,7 @@ function drawLogArea(){
     </div>`;
   }).join('');
   updateBento();
+  perfEnd('drawLogArea');
 }
 document.getElementById('saveSession').onclick = async ()=>{
   const di = +document.getElementById('daySelect').value;
@@ -959,14 +983,20 @@ function renderHistCard(s,i){
 }
 let HIST_SHOWN=14;
 function renderHist(){
+  perfStart('renderHist');
   const h = document.getElementById('sessionHist');
-  if(!DB.sessions.length){h.textContent='No sessions logged yet.';return}
-  const ordered = DB.sessions.map((s,i)=>({s,i})).reverse();
-  const shown = ordered.slice(0,HIST_SHOWN);
-  h.innerHTML = shown.map(({s,i})=>renderHistCard(s,i)).join('')
-    + (ordered.length>HIST_SHOWN ? `<button class="btn ghost sm" id="histShowMore" style="width:100%">Show more</button>` : '');
+  const total = DB.sessions.length;
+  if(!total){h.textContent='No sessions logged yet.';perfEnd('renderHist');return}
+  const count = Math.min(HIST_SHOWN, total);
+  let html='';
+  for(let k=0;k<count;k++){
+    const i = total-1-k;
+    html += renderHistCard(DB.sessions[i], i);
+  }
+  h.innerHTML = html + (total>HIST_SHOWN ? `<button class="btn ghost sm" id="histShowMore" style="width:100%">Show more</button>` : '');
   const moreBtn=document.getElementById('histShowMore');
   if(moreBtn) moreBtn.onclick=()=>{HIST_SHOWN+=14;renderHist()};
+  perfEnd('renderHist');
 }
 
 /* ── food ── */
@@ -1215,7 +1245,7 @@ function renderMassHeader(){
   if(cur!=null && start!=null && target!==start){
     pct = Math.max(0,Math.min(1,(cur-start)/(target-start)));
   }
-  document.getElementById('massBarFill').style.width=(pct*100)+'%';
+  document.getElementById('massBarFill').style.transform='scaleX('+pct+')';
 }
 document.getElementById('massTarget').onclick=async()=>{
   const v=prompt('Set target weight (kg):',DB.targetKg);
@@ -1283,6 +1313,11 @@ let EXDROP_EL=null;   // the dropdown DOM node (portaled to document.body)
 let EX_REPOSITION=null;
 let EX_BLUR_TIMER=null;
 let EX_SUPPRESS_REOPEN=false;
+let EX_INPUT_DEBOUNCE=null;
+function exRenderDropDebounced(input){
+  clearTimeout(EX_INPUT_DEBOUNCE);
+  EX_INPUT_DEBOUNCE=setTimeout(()=>exRenderDrop(input),120);
+}
 function exFilter(q){
   q=(q||'').trim().toLowerCase();
   const groups=[];
@@ -1294,6 +1329,7 @@ function exFilter(q){
 }
 function closeExDrop(){
   clearTimeout(EX_BLUR_TIMER);
+  clearTimeout(EX_INPUT_DEBOUNCE);
   if(EXDROP_EL){ EXDROP_EL.remove(); EXDROP_EL=null; }
   if(EX_REPOSITION){
     window.removeEventListener('scroll',EX_REPOSITION,true);
@@ -1317,6 +1353,7 @@ function positionExDrop(drop,input){
     drop.style.top=(r.bottom+3)+'px';
   }
 }
+const EX_ROW_CAP=30;
 function exRenderDrop(input){
   closeExDrop(); // only one dropdown open at a time
   const q=input.value;
@@ -1327,12 +1364,21 @@ function exRenderDrop(input){
   if(!groups.length){
     html+='<div class="empty">No matches</div>';
   } else {
-    groups.forEach(([g,names])=>{
+    let shown=0, truncated=false;
+    for(const [g,names] of groups){
+      if(shown>=EX_ROW_CAP){ truncated=true; break; }
+      const room=EX_ROW_CAP-shown;
+      const slice=names.slice(0,room);
+      if(slice.length<names.length) truncated=true;
       html+=`<div class="grp">${g}</div>`;
-      names.forEach(n=>{
+      slice.forEach(n=>{
         html+=`<div class="opt" data-name="${n.replace(/"/g,'&quot;')}">${n}</div>`;
       });
-    });
+      shown+=slice.length;
+    }
+    if(truncated){
+      html+=`<div class="empty">Type more to narrow results…</div>`;
+    }
   }
   const exact=Object.values(EXERCISE_DB).some(list=>list.some(n=>n.toLowerCase()===q.trim().toLowerCase()));
   if(q.trim() && !exact){
@@ -1402,7 +1448,7 @@ function drawEditor(){
     i.oninput=()=>{
       const [di,ei,f]=i.dataset.ex.split('-').map(Number);
       DRAFT[di].ex[ei][f]= f===2 ? Math.max(1,+i.value||1) : i.value;
-      if(f===0 && !EX_SUPPRESS_REOPEN) exRenderDrop(i);
+      if(f===0 && !EX_SUPPRESS_REOPEN) exRenderDropDebounced(i);
     };
     const [,,f]=i.dataset.ex.split('-').map(Number);
     if(f===0){
@@ -1435,7 +1481,22 @@ async function resetProgram(){
   DB.program=null; DB.activeSplitName=null; DRAFT=null; await save(); drawEditor(); renderProgram(); renderLogger(); toast('Default restored');
 }
 
-function renderAll(){renderProgram();renderLogger();renderHist();renderFood();renderWeight();renderPR();renderMassHeader();renderMilestones();initCalcCard()}
+const runWhenIdle = (typeof requestIdleCallback==='function') ? requestIdleCallback : (cb)=>setTimeout(cb,0);
+function renderAll(){
+  // Train tab is the only one visible at launch — render it synchronously so first paint is correct,
+  // then defer everything else (other tabs' content + history/milestones computation) past first paint.
+  renderLogger();
+  runWhenIdle(()=>{
+    renderProgram();
+    renderHist();
+    renderFood();
+    renderWeight();
+    renderPR();
+    renderMassHeader();
+    renderMilestones();
+    initCalcCard();
+  });
+}
 
 /* ── backup export / import ── */
 document.getElementById('exportBtn').onclick=()=>{
