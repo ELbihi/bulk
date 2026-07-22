@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>BULK CONTROL CENTER - Program Overview</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@600&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@100..900&family=Inter:wght@100..900&display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .active-tab .material-symbols-outlined {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #111318;
+            color: #e2e2e9;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .barlow { font-family: 'Barlow Condensed', sans-serif; }
+        .jetbrains { font-family: 'JetBrains Mono', monospace; }
+        
+        /* Custom scrollbar for chip row */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* Tactical Divider */
+        .dashed-divider {
+            background-image: linear-gradient(to right, #334155 50%, transparent 50%);
+            background-position: bottom;
+            background-size: 8px 1px;
+            background-repeat: repeat-x;
+        }
+
+        .industrial-card {
+            background-color: #1e2025;
+            border: 1px solid #334155;
+        }
+
+        .active-day-glow {
+            box-shadow: inset 0 0 20px rgba(242, 163, 60, 0.05);
+            border-color: #f2a33c !important;
+        }
+    </style>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "secondary": "#c4c6cf",
+                    "on-secondary": "#2d3038",
+                    "surface-dim": "#111318",
+                    "surface-container": "#1e2025",
+                    "on-background": "#e2e2e9",
+                    "on-secondary-fixed": "#191c22",
+                    "primary-fixed-dim": "#ffb964",
+                    "tertiary": "#93d8ff",
+                    "surface-bright": "#37393f",
+                    "tertiary-fixed": "#c3e8ff",
+                    "on-tertiary-fixed": "#001e2c",
+                    "background": "#111318",
+                    "outline-variant": "#524436",
+                    "surface-container-highest": "#33353a",
+                    "primary-container": "#f2a33c",
+                    "secondary-container": "#464951",
+                    "on-primary": "#482a00",
+                    "inverse-surface": "#e2e2e9",
+                    "error": "#ffb4ab",
+                    "primary": "#ffc482",
+                    "on-secondary-container": "#b6b8c1",
+                    "surface-container-low": "#1a1c20",
+                    "on-tertiary": "#003549",
+                    "surface-variant": "#33353a",
+                    "surface-tint": "#ffb964",
+                    "on-surface-variant": "#d7c3b0",
+                    "surface-container-high": "#282a2f",
+                    "on-primary-container": "#653d00",
+                    "surface": "#111318",
+                    "outline": "#a08e7c",
+                    "on-surface": "#e2e2e9",
+                    "primary-fixed": "#ffddba",
+                    "tertiary-fixed-dim": "#79d1ff",
+                    "secondary-fixed": "#e0e2eb",
+                    "inverse-primary": "#875300"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "xs": "8px",
+                    "container-margin": "20px",
+                    "sm": "12px",
+                    "gutter": "16px",
+                    "base": "4px",
+                    "lg": "24px",
+                    "xl": "32px",
+                    "md": "16px"
+            },
+            "fontFamily": {
+                    "headline-lg-mobile": ["Barlow Condensed"],
+                    "body-lg": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "body-md": ["Inter"],
+                    "headline-md": ["Barlow Condensed"],
+                    "display-lg": ["Barlow Condensed"],
+                    "headline-lg": ["Barlow Condensed"],
+                    "metric-md": ["JetBrains Mono"]
+            },
+            "fontSize": {
+                    "headline-lg-mobile": ["28px", {"lineHeight": "28px", "fontWeight": "700"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-md": ["24px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "display-lg": ["48px", {"lineHeight": "48px", "letterSpacing": "0.02em", "fontWeight": "700"}],
+                    "headline-lg": ["32px", {"lineHeight": "32px", "letterSpacing": "0.02em", "fontWeight": "700"}],
+                    "metric-md": ["20px", {"lineHeight": "24px", "letterSpacing": "-0.02em", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+</head>
+<body class="bg-background text-on-background min-h-screen pb-32">
+<!-- TopAppBar -->
+<header class="bg-background dark:bg-background fixed top-0 w-full z-50 flex justify-between items-center px-container-margin py-sm w-full">
+<div class="flex items-center gap-md">
+<button class="material-symbols-outlined text-primary dark:text-primary hover:opacity-80 transition-opacity active:scale-95">menu</button>
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile uppercase font-bold text-primary dark:text-primary tracking-tighter">BULK CONTROL CENTER</h1>
+</div>
+<div class="flex items-center gap-md">
+<span class="material-symbols-outlined text-primary">account_circle</span>
+</div>
+</header>
+<main class="pt-20 px-container-margin">
+<!-- Section: Program Selection -->
+<section class="mb-lg">
+<div class="flex justify-between items-end mb-sm">
+<h2 class="font-headline-md text-headline-md uppercase tracking-tight text-primary">Famous Splits</h2>
+<span class="font-label-sm text-label-sm text-secondary uppercase opacity-60">Library</span>
+</div>
+<div class="flex gap-sm overflow-x-auto no-scrollbar pb-xs">
+<button class="flex-shrink-0 px-md py-xs bg-primary-container text-on-primary-container font-label-sm text-label-sm uppercase rounded-lg font-bold border border-primary">PPL (Push/Pull/Legs)</button>
+<button class="flex-shrink-0 px-md py-xs bg-surface-container text-secondary font-label-sm text-label-sm uppercase rounded-lg border border-outline-variant hover:bg-surface-bright transition-colors">Arnold Split</button>
+<button class="flex-shrink-0 px-md py-xs bg-surface-container text-secondary font-label-sm text-label-sm uppercase rounded-lg border border-outline-variant hover:bg-surface-bright transition-colors">Upper/Lower</button>
+<button class="flex-shrink-0 px-md py-xs bg-surface-container text-secondary font-label-sm text-label-sm uppercase rounded-lg border border-outline-variant hover:bg-surface-bright transition-colors">Bro Split</button>
+</div>
+</section>
+<!-- Section: Weekly Program -->
+<section class="space-y-md">
+<div class="flex items-center justify-between">
+<h2 class="font-headline-md text-headline-md uppercase text-on-background">Weekly Schedule</h2>
+<div class="bg-surface-container-highest px-sm py-1 rounded text-[10px] font-bold uppercase tracking-widest text-primary border border-outline-variant">Hypertrophy Ph. 1</div>
+</div>
+<!-- Mon: Pull (Expanded) -->
+<div class="industrial-card rounded-xl overflow-hidden">
+<div class="px-md py-md flex justify-between items-center bg-surface-container-low border-b border-outline-variant">
+<div class="flex items-center gap-md">
+<span class="jetbrains text-metric-md text-secondary">MON</span>
+<div class="w-1 h-6 bg-secondary rounded-full"></div>
+<span class="barlow text-headline-md uppercase font-bold text-on-background">Pull Day</span>
+</div>
+<span class="material-symbols-outlined text-secondary opacity-40">expand_less</span>
+</div>
+<div class="p-md space-y-sm">
+<div class="flex justify-between items-center pb-xs border-b border-dashed border-outline-variant">
+<div>
+<p class="font-label-sm text-label-sm uppercase text-primary mb-1">Heavy Vertical</p>
+<p class="barlow text-lg font-bold uppercase text-on-background">Weighted Pull-ups</p>
+</div>
+<div class="text-right">
+<p class="jetbrains text-sm text-secondary">4 x 6-8</p>
+<p class="font-label-sm text-[10px] text-primary uppercase">RPE 9</p>
+</div>
+</div>
+<div class="flex justify-between items-center pb-xs border-b border-dashed border-outline-variant">
+<div>
+<p class="font-label-sm text-label-sm uppercase text-primary mb-1">Horizontal Pull</p>
+<p class="barlow text-lg font-bold uppercase text-on-background">Barbell Rows</p>
+</div>
+<div class="text-right">
+<p class="jetbrains text-sm text-secondary">3 x 10</p>
+<p class="font-label-sm text-[10px] text-primary uppercase">RPE 8</p>
+</div>
+</div>
+<div class="flex justify-between items-center">
+<div>
+<p class="font-label-sm text-label-sm uppercase text-primary mb-1">Isolation</p>
+<p class="barlow text-lg font-bold uppercase text-on-background">Face Pulls</p>
+</div>
+<div class="text-right">
+<p class="jetbrains text-sm text-secondary">3 x 15</p>
+<p class="font-label-sm text-[10px] text-primary uppercase">Burnout</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Tue: Push (Today) -->
+<div class="industrial-card rounded-xl overflow-hidden active-day-glow relative">
+<div class="absolute top-0 left-0 w-full h-1 bg-primary-container"></div>
+<div class="px-md py-md flex justify-between items-center">
+<div class="flex items-center gap-md">
+<span class="jetbrains text-metric-md text-primary">TUE</span>
+<div class="w-1 h-6 bg-primary-container rounded-full"></div>
+<div class="flex flex-col">
+<span class="barlow text-headline-md uppercase font-bold text-on-background">Push Day</span>
+<span class="font-label-sm text-[10px] text-primary-container uppercase font-bold tracking-[0.2em] -mt-1">Active Today</span>
+</div>
+</div>
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-primary-container" style="font-variation-settings: 'FILL' 1;">bolt</span>
+<span class="material-symbols-outlined text-secondary">expand_more</span>
+</div>
+</div>
+</div>
+<!-- Wed: Rest -->
+<div class="industrial-card rounded-xl overflow-hidden opacity-60">
+<div class="px-md py-md flex justify-between items-center">
+<div class="flex items-center gap-md">
+<span class="jetbrains text-metric-md text-secondary opacity-40">WED</span>
+<div class="w-1 h-6 bg-outline rounded-full"></div>
+<span class="barlow text-headline-md uppercase font-bold text-secondary">Rest & Recovery</span>
+</div>
+<span class="material-symbols-outlined text-secondary opacity-40">hotel</span>
+</div>
+</div>
+<!-- Thu: Legs -->
+<div class="industrial-card rounded-xl overflow-hidden">
+<div class="px-md py-md flex justify-between items-center">
+<div class="flex items-center gap-md">
+<span class="jetbrains text-metric-md text-secondary">THU</span>
+<div class="w-1 h-6 bg-secondary rounded-full"></div>
+<span class="barlow text-headline-md uppercase font-bold text-on-background">Leg Day (A)</span>
+</div>
+<span class="material-symbols-outlined text-secondary">expand_more</span>
+</div>
+</div>
+</section>
+<!-- Aesthetic Motivation Card -->
+<div class="mt-xl industrial-card rounded-xl p-md border-primary/20 bg-gradient-to-br from-surface-container to-surface-dim">
+<div class="flex gap-md items-start">
+<div class="w-16 h-16 rounded-lg bg-surface-bright flex items-center justify-center border border-outline-variant">
+<span class="material-symbols-outlined text-primary-container text-4xl" style="font-variation-settings: 'FILL' 1;">monitoring</span>
+</div>
+<div>
+<h3 class="barlow text-xl font-bold uppercase text-on-background">Training Momentum</h3>
+<p class="body-md text-secondary text-sm leading-relaxed mt-1">You've completed 12 consecutive training days in this program. Your volume is up 4.2% from last week.</p>
+</div>
+</div>
+</div>
+</main>
+<!-- Floating Action Button -->
+<button class="fixed bottom-20 right-container-margin w-14 h-14 bg-primary-container text-on-primary-container rounded-full shadow-lg shadow-background/50 flex items-center justify-center z-50 active:scale-90 transition-transform duration-150 border-2 border-primary-container/20">
+<span class="material-symbols-outlined text-3xl font-bold">add</span>
+</button>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center h-16 px-xs bg-surface-container dark:bg-surface-container border-t border-outline-variant shadow-lg rounded-t-xl">
+<button class="flex flex-col items-center justify-center text-secondary dark:text-secondary opacity-60 hover:bg-surface-bright dark:hover:bg-surface-bright active:scale-90 transition-transform duration-150">
+<span class="material-symbols-outlined">fitness_center</span>
+<span class="font-label-sm text-label-sm uppercase">TRAIN</span>
+</button>
+<button class="flex flex-col items-center justify-center text-primary dark:text-primary font-bold active-tab hover:bg-surface-bright dark:hover:bg-surface-bright active:scale-90 transition-transform duration-150">
+<span class="material-symbols-outlined">calendar_today</span>
+<span class="font-label-sm text-label-sm uppercase">PROGRAM</span>
+</button>
+<button class="flex flex-col items-center justify-center text-secondary dark:text-secondary opacity-60 hover:bg-surface-bright dark:hover:bg-surface-bright active:scale-90 transition-transform duration-150">
+<span class="material-symbols-outlined">restaurant</span>
+<span class="font-label-sm text-label-sm uppercase">FOOD</span>
+</button>
+<button class="flex flex-col items-center justify-center text-secondary dark:text-secondary opacity-60 hover:bg-surface-bright dark:hover:bg-surface-bright active:scale-90 transition-transform duration-150">
+<span class="material-symbols-outlined">monitoring</span>
+<span class="font-label-sm text-label-sm uppercase">PROGRESS</span>
+</button>
+</nav>
+<script>
+        // Micro-interactions
+        document.querySelectorAll('.industrial-card').forEach(card => {
+            card.addEventListener('click', () => {
+                card.classList.add('scale-[0.98]');
+                setTimeout(() => card.classList.remove('scale-[0.98]'), 150);
+            });
+        });
+
+        // Add some "Industrial" atmospheric scanline effect via JS if wanted, 
+        // but keeping it clean for performance as requested.
+    </script>
+</body></html>

@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Nutrition - Bulk Control Center</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&amp;family=Inter:wght@400;600;700&amp;family=JetBrains+Mono:wght@600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .dashed-divider {
+            background-image: linear-gradient(to right, #334155 50%, transparent 50%);
+            background-position: bottom;
+            background-size: 8px 1px;
+            background-repeat: repeat-x;
+        }
+        .progress-ring-circle {
+            transition: stroke-dashoffset 0.35s;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+        }
+        /* Custom tactile active state */
+        .btn-press:active {
+            transform: scale(0.95);
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary": "#c4c6cf",
+                        "on-secondary": "#2d3038",
+                        "surface-dim": "#111318",
+                        "surface-container": "#1e2025",
+                        "on-background": "#e2e2e9",
+                        "on-secondary-fixed": "#191c22",
+                        "primary-fixed-dim": "#ffb964",
+                        "tertiary": "#93d8ff",
+                        "surface-bright": "#37393f",
+                        "tertiary-fixed": "#c3e8ff",
+                        "on-tertiary-fixed": "#001e2c",
+                        "background": "#111318",
+                        "outline-variant": "#524436",
+                        "surface-container-highest": "#33353a",
+                        "primary-container": "#f2a33c",
+                        "secondary-container": "#464951",
+                        "on-tertiary-container": "#004b67",
+                        "on-primary": "#482a00",
+                        "inverse-surface": "#e2e2e9",
+                        "on-error": "#690005",
+                        "error-container": "#93000a",
+                        "surface-variant": "#33353a",
+                        "tertiary-container": "#4fbff4",
+                        "surface-tint": "#ffb964",
+                        "on-surface-variant": "#d7c3b0",
+                        "inverse-on-surface": "#2e3036",
+                        "surface-container-high": "#282a2f",
+                        "on-primary-container": "#653d00",
+                        "surface": "#111318",
+                        "outline": "#a08e7c",
+                        "on-surface": "#e2e2e9",
+                        "primary-fixed": "#ffddba",
+                        "on-primary-fixed-variant": "#663e00",
+                        "tertiary-fixed-dim": "#79d1ff",
+                        "secondary-fixed": "#e0e2eb",
+                        "primary": "#ffc482",
+                        "on-tertiary": "#003549",
+                        "error": "#ffb4ab",
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "xs": "8px",
+                        "container-margin": "20px",
+                        "sm": "12px",
+                        "gutter": "16px",
+                        "base": "4px",
+                        "lg": "24px",
+                        "xl": "32px",
+                        "md": "16px"
+                    },
+                    "fontFamily": {
+                        "headline-lg-mobile": ["Barlow Condensed"],
+                        "body-lg": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "body-md": ["Inter"],
+                        "headline-md": ["Barlow Condensed"],
+                        "display-lg": ["Barlow Condensed"],
+                        "headline-lg": ["Barlow Condensed"],
+                        "metric-md": ["JetBrains Mono"]
+                    },
+                    "fontSize": {
+                        "headline-lg-mobile": ["28px", {"lineHeight": "28px", "fontWeight": "700"}],
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                        "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "headline-md": ["24px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "display-lg": ["48px", {"lineHeight": "48px", "letterSpacing": "0.02em", "fontWeight": "700"}],
+                        "headline-lg": ["32px", {"lineHeight": "32px", "letterSpacing": "0.02em", "fontWeight": "700"}],
+                        "metric-md": ["20px", {"lineHeight": "24px", "letterSpacing": "-0.02em", "fontWeight": "600"}]
+                    }
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen pb-32">
+<!-- Top App Bar -->
+<header class="bg-background dark:bg-background text-primary dark:text-primary docked full-width top-0 z-40">
+<div class="flex justify-between items-center px-container-margin py-sm w-full">
+<div class="flex items-center gap-md">
+<span class="material-symbols-outlined text-primary">menu</span>
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile font-bold text-primary dark:text-primary tracking-tighter uppercase">BULK CONTROL CENTER</h1>
+</div>
+<div class="w-10 h-10 rounded-full border border-outline-variant bg-surface-container flex items-center justify-center overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A cinematic close-up shot of a muscular athlete in a dark, atmospheric industrial gym. The lighting is high-contrast with warm orange rim lights reflecting off metallic surfaces and sweat. The background is a deep gunmetal grey with blurred industrial equipment. Professional high-performance photography style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBMrXb5-UZwU0Mp_FuM5dWmv43ItocXaC0TGtxmU6hItKUvXq_r0V8_9pKVGJluOPPzsT9FMQaOfx7K5vc9SaCaf_SGPAfscTpU9RLY0UY_eJEzkA-zdJ-6J-bMzFqzEdhhHVQK7YfyFNl4NFktroTPh4tLB-FnXZZ5ZvDuM2fXqtA3nS8ZDW0OYbmlcTduiQ1gBmD1hjs69JG8G2C0fSgzcujZYDwfGQSMFaqGMCQIY77oPAf43QSqOA"/>
+</div>
+</div>
+</header>
+<main class="px-container-margin mt-md space-y-lg">
+<!-- Large Circular Progress Ring -->
+<section class="flex flex-col items-center justify-center py-lg relative">
+<div class="relative w-64 h-64 flex items-center justify-center">
+<svg class="w-full h-full">
+<!-- Background Circle -->
+<circle class="text-surface-container-highest stroke-current" cx="128" cy="128" fill="transparent" r="110" stroke-width="12"></circle>
+<!-- Progress Circle -->
+<circle class="text-primary-container stroke-current progress-ring-circle" cx="128" cy="128" fill="transparent" r="110" stroke-linecap="round" stroke-width="12" style="stroke-dasharray: 691; stroke-dashoffset: 153;"></circle>
+</svg>
+<div class="absolute flex flex-col items-center">
+<span class="font-label-sm text-label-sm text-secondary uppercase tracking-widest mb-base">Consumed</span>
+<span class="font-display-lg text-display-lg text-primary-container leading-none">2100</span>
+<div class="h-[1px] w-12 bg-outline-variant my-xs"></div>
+<span class="font-metric-md text-metric-md text-secondary">2700 <span class="text-label-sm">KCAL</span></span>
+</div>
+</div>
+<div class="absolute bottom-4 right-0">
+<div class="bg-surface-container border border-outline-variant px-sm py-xs rounded flex items-center gap-xs">
+<span class="material-symbols-outlined text-primary-container" style="font-variation-settings: 'FILL' 1;">local_fire_department</span>
+<span class="font-label-sm text-label-sm uppercase">600 Left</span>
+</div>
+</div>
+</section>
+<!-- Macro Stat Tiles Grid -->
+<section class="grid grid-cols-2 gap-md">
+<!-- Macros are 180P, 300C, 70F per prompt -->
+<div class="bg-surface-container border border-outline-variant p-md rounded-lg">
+<span class="font-label-sm text-label-sm text-secondary uppercase block mb-xs">Protein</span>
+<div class="flex items-baseline gap-xs">
+<span class="font-metric-md text-metric-md text-on-background">180</span>
+<span class="font-label-sm text-label-sm text-secondary">/ 220g</span>
+</div>
+<div class="w-full bg-surface-dim h-1 mt-sm rounded-full overflow-hidden">
+<div class="bg-primary-container h-full w-[81%]"></div>
+</div>
+</div>
+<div class="bg-surface-container border border-outline-variant p-md rounded-lg">
+<span class="font-label-sm text-label-sm text-secondary uppercase block mb-xs">Carbs</span>
+<div class="flex items-baseline gap-xs">
+<span class="font-metric-md text-metric-md text-on-background">300</span>
+<span class="font-label-sm text-label-sm text-secondary">/ 400g</span>
+</div>
+<div class="w-full bg-surface-dim h-1 mt-sm rounded-full overflow-hidden">
+<div class="bg-primary-container h-full w-[75%]"></div>
+</div>
+</div>
+<div class="bg-surface-container border border-outline-variant p-md rounded-lg">
+<span class="font-label-sm text-label-sm text-secondary uppercase block mb-xs">Fats</span>
+<div class="flex items-baseline gap-xs">
+<span class="font-metric-md text-metric-md text-on-background">70</span>
+<span class="font-label-sm text-label-sm text-secondary">/ 85g</span>
+</div>
+<div class="w-full bg-surface-dim h-1 mt-sm rounded-full overflow-hidden">
+<div class="bg-primary-container h-full w-[82%]"></div>
+</div>
+</div>
+<div class="bg-surface-container border border-outline-variant p-md rounded-lg">
+<span class="font-label-sm text-label-sm text-secondary uppercase block mb-xs">Water</span>
+<div class="flex items-baseline gap-xs">
+<span class="font-metric-md text-metric-md text-on-background">3.2</span>
+<span class="font-label-sm text-label-sm text-secondary">/ 4L</span>
+</div>
+<div class="w-full bg-surface-dim h-1 mt-sm rounded-full overflow-hidden">
+<div class="bg-tertiary-container h-full w-[80%]"></div>
+</div>
+</div>
+</section>
+<!-- Quick Add Row -->
+<section class="bg-surface-container border border-outline-variant p-sm rounded-lg">
+<form class="flex gap-sm">
+<div class="relative flex-1">
+<input class="w-full bg-surface-dim border border-outline-variant rounded px-md py-sm font-metric-md text-on-background focus:outline-none focus:border-primary-container placeholder:text-outline placeholder:font-body-md" placeholder="Add kcal..." type="number"/>
+</div>
+<button class="bg-primary-container text-on-primary font-headline-md text-headline-md px-lg py-sm rounded uppercase btn-press flex items-center justify-center min-w-[80px]" type="submit">
+                    ADD
+                </button>
+</form>
+</section>
+<!-- Meal Plan List -->
+<section class="space-y-md">
+<h2 class="font-headline-md text-headline-md uppercase text-primary-container">Scheduled Meals</h2>
+<div class="bg-surface-container border border-outline-variant rounded-lg overflow-hidden">
+<!-- Meal 1 -->
+<div class="p-md flex items-center justify-between dashed-divider">
+<div class="flex items-center gap-md">
+<div class="bg-surface-container-highest w-12 h-12 rounded border border-outline-variant flex items-center justify-center">
+<span class="material-symbols-outlined text-secondary">breakfast_dining</span>
+</div>
+<div>
+<p class="font-headline-md text-headline-md leading-tight">Meal 1: Oats &amp; Protein</p>
+<p class="font-label-sm text-label-sm text-secondary">08:30 AM • 450 kcal</p>
+</div>
+</div>
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+</div>
+<!-- Meal 2 -->
+<div class="p-md flex items-center justify-between dashed-divider">
+<div class="flex items-center gap-md">
+<div class="bg-surface-container-highest w-12 h-12 rounded border border-outline-variant flex items-center justify-center">
+<span class="material-symbols-outlined text-secondary">lunch_dining</span>
+</div>
+<div>
+<p class="font-headline-md text-headline-md leading-tight">Meal 2: Chicken &amp; Rice</p>
+<p class="font-label-sm text-label-sm text-secondary">12:45 PM • 650 kcal</p>
+</div>
+</div>
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+</div>
+<!-- Meal 3 (Next) -->
+<div class="p-md flex items-center justify-between dashed-divider">
+<div class="flex items-center gap-md">
+<div class="bg-surface-container-highest w-12 h-12 rounded border border-outline-variant flex items-center justify-center relative">
+<span class="material-symbols-outlined text-secondary">restaurant</span>
+<div class="absolute -top-1 -right-1 w-3 h-3 bg-primary-container rounded-full animate-pulse"></div>
+</div>
+<div>
+<p class="font-headline-md text-headline-md leading-tight">Meal 3: Beef &amp; Sweet Potato</p>
+<p class="font-label-sm text-label-sm text-secondary">04:30 PM • 700 kcal</p>
+</div>
+</div>
+<div class="flex items-center gap-sm">
+<button class="bg-outline-variant/20 border border-outline-variant text-on-surface-variant font-label-sm text-label-sm px-sm py-1 rounded btn-press">
+                            LOG
+                        </button>
+</div>
+</div>
+<!-- Meal 4 -->
+<div class="p-md flex items-center justify-between opacity-60">
+<div class="flex items-center gap-md">
+<div class="bg-surface-container-highest w-12 h-12 rounded border border-outline-variant flex items-center justify-center">
+<span class="material-symbols-outlined text-secondary">dinner_dining</span>
+</div>
+<div>
+<p class="font-headline-md text-headline-md leading-tight">Meal 4: Casein &amp; Almonds</p>
+<p class="font-label-sm text-label-sm text-secondary">09:30 PM • 300 kcal</p>
+</div>
+</div>
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-outline">pending</span>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Bottom Nav Bar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center h-16 px-xs bg-surface-container dark:bg-surface-container border-t border-outline-variant shadow-lg rounded-t-xl">
+<a class="flex flex-col items-center justify-center text-secondary dark:text-secondary opacity-60 hover:bg-surface-bright dark:hover:bg-surface-bright transition-opacity active:scale-90 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined">fitness_center</span>
+<span class="font-label-sm text-label-sm uppercase">TRAIN</span>
+</a>
+<a class="flex flex-col items-center justify-center text-secondary dark:text-secondary opacity-60 hover:bg-surface-bright dark:hover:bg-surface-bright transition-opacity active:scale-90 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined">calendar_today</span>
+<span class="font-label-sm text-label-sm uppercase">PROGRAM</span>
+</a>
+<!-- ACTIVE: FOOD -->
+<a class="flex flex-col items-center justify-center text-primary dark:text-primary font-bold hover:bg-surface-bright dark:hover:bg-surface-bright active:scale-90 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">restaurant</span>
+<span class="font-label-sm text-label-sm uppercase">FOOD</span>
+</a>
+<a class="flex flex-col items-center justify-center text-secondary dark:text-secondary opacity-60 hover:bg-surface-bright dark:hover:bg-surface-bright transition-opacity active:scale-90 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined">monitoring</span>
+<span class="font-label-sm text-label-sm uppercase">PROGRESS</span>
+</a>
+</nav>
+<!-- Micro-interaction: Scroll listener for header elevation -->
+<script>
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('header');
+            if (window.scrollY > 10) {
+                header.classList.add('shadow-md', 'bg-surface-dim');
+            } else {
+                header.classList.remove('shadow-md', 'bg-surface-dim');
+            }
+        });
+
+        // Simple button active response script for better "industrial" feel
+        document.querySelectorAll('button').forEach(btn => {
+            btn.addEventListener('touchstart', () => btn.classList.add('active:scale-95'));
+        });
+    </script>
+</body></html>

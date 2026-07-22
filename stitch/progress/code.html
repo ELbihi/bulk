@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Progress Tracking | Bulk Control Center</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&amp;family=Inter:wght@400;600&amp;family=JetBrains+Mono:wght@600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "secondary": "#c4c6cf",
+                    "on-secondary": "#2d3038",
+                    "surface-dim": "#111318",
+                    "surface-container": "#1e2025",
+                    "on-background": "#e2e2e9",
+                    "on-secondary-fixed": "#191c22",
+                    "primary-fixed-dim": "#ffb964",
+                    "tertiary": "#93d8ff",
+                    "surface-bright": "#37393f",
+                    "tertiary-fixed": "#c3e8ff",
+                    "on-tertiary-fixed": "#001e2c",
+                    "background": "#111318",
+                    "outline-variant": "#524436",
+                    "surface-container-highest": "#33353a",
+                    "primary-container": "#f2a33c",
+                    "secondary-fixed-dim": "#c4c6cf",
+                    "on-primary-fixed": "#2b1700",
+                    "on-error-container": "#ffdad6",
+                    "on-tertiary": "#003549",
+                    "error": "#ffb4ab",
+                    "primary": "#ffc482",
+                    "on-secondary-container": "#b6b8c1",
+                    "surface-container-lowest": "#0c0e13",
+                    "surface-container-low": "#1a1c20",
+                    "secondary-container": "#464951",
+                    "on-tertiary-container": "#004b67",
+                    "on-primary": "#482a00",
+                    "inverse-surface": "#e2e2e9",
+                    "on-error": "#690005",
+                    "error-container": "#93000a",
+                    "surface-variant": "#33353a",
+                    "tertiary-container": "#4fbff4",
+                    "surface-tint": "#ffb964",
+                    "on-surface-variant": "#d7c3b0",
+                    "inverse-on-surface": "#2e3036",
+                    "surface-container-high": "#282a2f",
+                    "on-primary-container": "#653d00",
+                    "surface": "#111318",
+                    "outline": "#a08e7c",
+                    "on-secondary-fixed-variant": "#44474e",
+                    "on-surface": "#e2e2e9",
+                    "primary-fixed": "#ffddba",
+                    "on-primary-fixed-variant": "#663e00",
+                    "tertiary-fixed-dim": "#79d1ff",
+                    "secondary-fixed": "#e0e2eb",
+                    "inverse-primary": "#875300",
+                    "on-tertiary-fixed-variant": "#004c68"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "xs": "8px",
+                    "container-margin": "20px",
+                    "sm": "12px",
+                    "gutter": "16px",
+                    "base": "4px",
+                    "lg": "24px",
+                    "xl": "32px",
+                    "md": "16px"
+            },
+            "fontFamily": {
+                    "headline-lg-mobile": ["Barlow Condensed"],
+                    "body-lg": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "body-md": ["Inter"],
+                    "headline-md": ["Barlow Condensed"],
+                    "display-lg": ["Barlow Condensed"],
+                    "headline-lg": ["Barlow Condensed"],
+                    "metric-md": ["JetBrains Mono"]
+            },
+            "fontSize": {
+                    "headline-lg-mobile": ["28px", {"lineHeight": "28px", "fontWeight": "700"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-md": ["24px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "display-lg": ["48px", {"lineHeight": "48px", "letterSpacing": "0.02em", "fontWeight": "700"}],
+                    "headline-lg": ["32px", {"lineHeight": "32px", "letterSpacing": "0.02em", "fontWeight": "700"}],
+                    "metric-md": ["20px", {"lineHeight": "24px", "letterSpacing": "-0.02em", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .chart-grid {
+            background-image: linear-gradient(to right, #334155 1px, transparent 1px),
+                              linear-gradient(to bottom, #334155 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+        .dashed-divider {
+            background-image: linear-gradient(to right, #334155 50%, transparent 50%);
+            background-position: bottom;
+            background-size: 4px 1px;
+            background-repeat: repeat-x;
+        }
+        .mask-gradient {
+            mask-image: linear-gradient(to top, black, transparent);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen font-body-md overflow-x-hidden">
+<!-- Top App Bar -->
+<header class="bg-background dark:bg-background text-primary dark:text-primary flex justify-between items-center px-container-margin py-sm w-full docked full-width top-0 z-50">
+<div class="flex items-center gap-md">
+<span class="material-symbols-outlined text-primary hover:opacity-80 transition-opacity active:scale-95 transition-transform duration-100 cursor-pointer">menu</span>
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile uppercase font-bold tracking-tighter">BULK CONTROL CENTER</h1>
+</div>
+<div class="flex items-center gap-md">
+<span class="material-symbols-outlined text-primary hover:opacity-80 transition-opacity active:scale-95 transition-transform duration-100 cursor-pointer">notifications</span>
+<div class="w-8 h-8 rounded-full border border-primary overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A professional close-up headshot of a fit athlete with a determined expression, shot in a moody industrial gym setting with high-contrast amber lighting against deep charcoal shadows. The athlete has short hair and a focused look, embodying the modern industrial strength training aesthetic of the Bulk Control Center app." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAZEaowR3_0iuWKNURIDqpNhESssjkEA5NnyD2IiS4H0jho9F-h8NcoO44-wCAnpQfgika5NlbdLBiYQOrAjq-GHj4floyhkEg8yxX_rqYTd8isgQKgdrODdNA9t9Y-F1RbJCwPoMvi-gvB1Xnh2vZ1bk4CxVFjIBcedth3VsKBByFHZkq5pzD7qv40Q9TRm0n6wirl4m5IVERVyyW_sTLgDTD2mgg2Cl_gLIe_fuOAstHwHiISkQuV7A"/>
+</div>
+</div>
+</header>
+<main class="pb-24 pt-4 px-container-margin max-w-4xl mx-auto">
+<!-- Progress Header Summary -->
+<section class="mb-xl">
+<div class="flex items-end justify-between mb-sm">
+<div>
+<p class="font-label-sm text-label-sm uppercase text-secondary mb-base">Current Mass</p>
+<div class="flex items-baseline gap-xs">
+<span class="font-display-lg text-display-lg text-primary">63</span>
+<span class="font-headline-md text-headline-md text-secondary">KG</span>
+</div>
+</div>
+<div class="text-right">
+<p class="font-label-sm text-label-sm uppercase text-secondary mb-base">Target Goal</p>
+<div class="flex items-baseline justify-end gap-xs">
+<span class="font-headline-lg text-headline-lg text-on-background">70</span>
+<span class="font-headline-md text-headline-md text-secondary">KG</span>
+</div>
+</div>
+</div>
+<!-- Progress Bar -->
+<div class="relative h-2 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="absolute top-0 left-0 h-full bg-primary-container" style="width: 53.3%"></div>
+</div>
+<div class="flex justify-between mt-xs">
+<span class="font-label-sm text-label-sm text-secondary">START: 55KG</span>
+<span class="font-label-sm text-label-sm text-primary">7KG REMAINING</span>
+</div>
+</section>
+<!-- Bodyweight Line Chart -->
+<section class="mb-xl p-md bg-surface-container border border-[#334155] rounded-xl relative overflow-hidden">
+<h2 class="font-headline-md text-headline-md uppercase mb-md text-primary">Weight Trend</h2>
+<div class="h-48 w-full relative chart-grid border-l border-b border-[#334155]">
+<!-- Simple SVG Chart Representation -->
+<svg class="absolute inset-0 w-full h-full p-xs" preserveaspectratio="none" viewbox="0 0 100 100">
+<path d="M 0 90 L 20 82 L 40 75 L 60 60 L 80 45 L 100 20" fill="none" stroke="#F2A33C" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"></path>
+<circle cx="0" cy="90" fill="#F2A33C" r="1.5"></circle>
+<circle cx="20" cy="82" fill="#F2A33C" r="1.5"></circle>
+<circle cx="40" cy="75" fill="#F2A33C" r="1.5"></circle>
+<circle cx="60" cy="60" fill="#F2A33C" r="1.5"></circle>
+<circle cx="80" cy="45" fill="#F2A33C" r="1.5"></circle>
+<circle cx="100" cy="20" fill="#F2A33C" r="1.5"></circle>
+</svg>
+</div>
+<div class="flex justify-between mt-sm">
+<span class="font-label-sm text-label-sm text-secondary">MONTH 1</span>
+<span class="font-label-sm text-label-sm text-secondary">MONTH 2</span>
+<span class="font-label-sm text-label-sm text-secondary">MONTH 3</span>
+<span class="font-label-sm text-label-sm text-secondary">CURRENT</span>
+</div>
+</section>
+<!-- PR Table & Progress Photo Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
+<!-- Personal Records -->
+<section class="bg-surface-container border border-[#334155] rounded-xl p-md">
+<div class="flex justify-between items-center mb-md">
+<h2 class="font-headline-md text-headline-md uppercase text-primary">Hall of Gains</h2>
+<span class="bg-primary-container text-on-primary-fixed font-label-sm text-[10px] px-xs py-[2px] rounded uppercase">Elite Level</span>
+</div>
+<div class="space-y-sm">
+<div class="flex justify-between items-center pb-sm dashed-divider">
+<div>
+<p class="font-label-sm text-label-sm uppercase text-secondary">Deadlift</p>
+<p class="font-headline-md text-headline-md">180<span class="text-sm ml-1 text-secondary">KG</span></p>
+</div>
+<div class="text-right">
+<p class="font-label-sm text-label-sm uppercase text-secondary">Reps</p>
+<p class="font-metric-md text-metric-md">× 5</p>
+</div>
+</div>
+<div class="flex justify-between items-center pb-sm dashed-divider">
+<div>
+<p class="font-label-sm text-label-sm uppercase text-secondary">Squat</p>
+<p class="font-headline-md text-headline-md">140<span class="text-sm ml-1 text-secondary">KG</span></p>
+</div>
+<div class="text-right">
+<p class="font-label-sm text-label-sm uppercase text-secondary">Reps</p>
+<p class="font-metric-md text-metric-md">× 5</p>
+</div>
+</div>
+<div class="flex justify-between items-center pb-sm">
+<div>
+<p class="font-label-sm text-label-sm uppercase text-secondary">Bench Press</p>
+<p class="font-headline-md text-headline-md">105<span class="text-sm ml-1 text-secondary">KG</span></p>
+</div>
+<div class="text-right">
+<p class="font-label-sm text-label-sm uppercase text-secondary">Reps</p>
+<p class="font-metric-md text-metric-md">× 8</p>
+</div>
+</div>
+</div>
+<button class="w-full mt-md py-sm bg-transparent border border-primary text-primary font-headline-md text-headline-md uppercase hover:bg-primary hover:text-black transition-all active:scale-95">Update Record</button>
+</section>
+<!-- Progress Photo Card -->
+<section class="bg-surface-container border-2 border-primary-container rounded-xl overflow-hidden flex flex-col">
+<div class="relative flex-grow min-h-[280px]">
+<div class="absolute inset-0 bg-cover bg-center grayscale hover:grayscale-0 transition-all duration-500 cursor-zoom-in" data-alt="A high-contrast black and white physique progress photograph of a muscular athlete showing upper body gains. The lighting is harsh side-lighting, typical of a professional gym studio, highlighting muscle definition and texture. The overall aesthetic is gritty, industrial, and focused on physical achievement, matching the dark and amber theme of the Bulk Control Center app." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCLG8cf4negI9Pi0eP3mILJejugr41qtnzLjd54qDDpMdOymX_CpjvtYm9SSmY7X1sFimMUBFopxcmjeIePTQWmue4JkMJLkA_JDLF5ot43XAh14_eA5itwMcVi_ackrYw1K47y0omVFMyBSpW20sZVQYFqm188JwN9O6h-9DORVyuJ-rER3clyNrBjogVNupiN1MPmZ42tN5neAkOvVKXYBy06Iu_hHpX1h4Y4_XTapfCjcmBpE1dYEQ')"></div>
+<div class="absolute bottom-0 left-0 w-full p-md bg-gradient-to-t from-black to-transparent">
+<p class="font-label-sm text-label-sm uppercase text-primary">Current Physique</p>
+<h3 class="font-headline-md text-headline-md uppercase text-on-background">Month 4 Check-in</h3>
+</div>
+</div>
+<div class="p-md bg-surface-container-high border-t border-[#334155] flex justify-between items-center">
+<span class="font-label-sm text-label-sm text-secondary uppercase">Last Taken: 2 Days ago</span>
+<button class="flex items-center gap-xs font-label-sm text-label-sm text-primary uppercase">
+<span class="material-symbols-outlined text-[18px]">add_a_photo</span>
+                        Update
+                    </button>
+</div>
+</section>
+</div>
+<!-- Recent Logs -->
+<section class="mt-xl">
+<h2 class="font-headline-md text-headline-md uppercase mb-md text-secondary">Recent Milestones</h2>
+<div class="space-y-xs">
+<div class="flex items-center gap-md p-sm bg-surface-container-low border border-[#334155] rounded-lg">
+<div class="w-10 h-10 rounded-full bg-surface-container-highest flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">trending_up</span>
+</div>
+<div>
+<p class="font-body-md text-on-background">Increased Squat by <span class="text-primary font-bold">5kg</span></p>
+<p class="font-label-sm text-label-sm text-secondary">October 24, 2023</p>
+</div>
+</div>
+<div class="flex items-center gap-md p-sm bg-surface-container-low border border-[#334155] rounded-lg">
+<div class="w-10 h-10 rounded-full bg-surface-container-highest flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">scale</span>
+</div>
+<div>
+<p class="font-body-md text-on-background">Reached weight milestone: <span class="text-primary font-bold">63kg</span></p>
+<p class="font-label-sm text-label-sm text-secondary">October 21, 2023</p>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Bottom Navigation Bar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center h-16 px-xs bg-surface-container dark:bg-surface-container border-t border-outline-variant shadow-lg rounded-t-xl">
+<!-- TRAIN -->
+<a class="flex flex-col items-center justify-center text-secondary dark:text-secondary opacity-60 hover:bg-surface-bright dark:hover:bg-surface-bright active:scale-90 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined">fitness_center</span>
+<span class="font-label-sm text-label-sm uppercase">TRAIN</span>
+</a>
+<!-- PROGRAM -->
+<a class="flex flex-col items-center justify-center text-secondary dark:text-secondary opacity-60 hover:bg-surface-bright dark:hover:bg-surface-bright active:scale-90 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined">calendar_today</span>
+<span class="font-label-sm text-label-sm uppercase">PROGRAM</span>
+</a>
+<!-- FOOD -->
+<a class="flex flex-col items-center justify-center text-secondary dark:text-secondary opacity-60 hover:bg-surface-bright dark:hover:bg-surface-bright active:scale-90 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined">restaurant</span>
+<span class="font-label-sm text-label-sm uppercase">FOOD</span>
+</a>
+<!-- PROGRESS (Active) -->
+<a class="flex flex-col items-center justify-center text-primary dark:text-primary font-bold hover:bg-surface-bright dark:hover:bg-surface-bright active:scale-90 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">monitoring</span>
+<span class="font-label-sm text-label-sm uppercase">PROGRESS</span>
+</a>
+</nav>
+<!-- Floating Action Button Contextual (Suppressing on Progress as per logic, but adding a specialized metric log button) -->
+<button class="fixed bottom-20 right-container-margin w-14 h-14 bg-primary-container text-on-primary-container rounded-full shadow-lg flex items-center justify-center active:scale-95 transition-transform z-40">
+<span class="material-symbols-outlined" style="font-variation-settings: 'wght' 700;">add</span>
+</button>
+<script>
+        // Micro-interaction for the chart
+        document.addEventListener('DOMContentLoaded', () => {
+            const chartPoints = document.querySelectorAll('circle');
+            chartPoints.forEach((point, index) => {
+                point.style.opacity = '0';
+                point.style.transition = `opacity 0.5s ease ${index * 0.1}s`;
+                setTimeout(() => point.style.opacity = '1', 100);
+            });
+        });
+    </script>
+</body></html>

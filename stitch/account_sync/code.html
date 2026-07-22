@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Account & Sync | BULK CONTROL CENTER</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Inter:wght@400;600&family=JetBrains+Mono:wght@600&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@100..900&family=Inter:wght@100..900&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-secondary-fixed": "#191c22",
+                        "on-secondary-container": "#b6b8c1",
+                        "error": "#ffb4ab",
+                        "on-surface-variant": "#d7c3b0",
+                        "primary-container": "#f2a33c",
+                        "outline": "#a08e7c",
+                        "on-error-container": "#ffdad6",
+                        "tertiary-fixed": "#c3e8ff",
+                        "surface-container-lowest": "#0c0e13",
+                        "surface-dim": "#111318",
+                        "on-tertiary-fixed-variant": "#004c68",
+                        "background": "#111318",
+                        "surface-container": "#1e2025",
+                        "primary-fixed-dim": "#ffb964",
+                        "error-container": "#93000a",
+                        "on-error": "#690005",
+                        "secondary-container": "#464951",
+                        "on-surface": "#e2e2e9",
+                        "surface-container-highest": "#33353a",
+                        "surface-container-low": "#1a1c20",
+                        "inverse-primary": "#875300",
+                        "primary-fixed": "#ffddba",
+                        "on-primary-container": "#653d00",
+                        "inverse-surface": "#e2e2e9",
+                        "secondary-fixed-dim": "#c4c6cf",
+                        "secondary-fixed": "#e0e2eb",
+                        "surface-tint": "#ffb964",
+                        "outline-variant": "#524436",
+                        "on-tertiary": "#003549",
+                        "surface-container-high": "#282a2f",
+                        "on-background": "#e2e2e9",
+                        "on-secondary": "#2d3038",
+                        "secondary": "#c4c6cf",
+                        "on-primary-fixed-variant": "#663e00",
+                        "inverse-on-surface": "#2e3036",
+                        "on-tertiary-container": "#004b67",
+                        "tertiary": "#93d8ff",
+                        "tertiary-fixed-dim": "#79d1ff",
+                        "on-tertiary-fixed": "#001e2c",
+                        "on-primary": "#482a00",
+                        "surface": "#111318",
+                        "surface-bright": "#37393f",
+                        "primary": "#ffc482",
+                        "on-secondary-fixed-variant": "#44474e",
+                        "surface-variant": "#33353a",
+                        "on-primary-fixed": "#2b1700",
+                        "tertiary-container": "#4fbff4"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "12px",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "xl": "32px",
+                        "base": "4px",
+                        "xs": "8px",
+                        "md": "16px",
+                        "container-margin": "20px",
+                        "sm": "12px",
+                        "lg": "24px",
+                        "gutter": "16px"
+                    },
+                    "fontFamily": {
+                        "headline-lg": ["Barlow Condensed"],
+                        "label-sm": ["Inter"],
+                        "headline-md": ["Barlow Condensed"],
+                        "headline-lg-mobile": ["Barlow Condensed"],
+                        "display-lg": ["Barlow Condensed"],
+                        "metric-md": ["JetBrains Mono"],
+                        "body-md": ["Inter"],
+                        "body-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-lg": ["32px", {"lineHeight": "32px", "letterSpacing": "0.02em", "fontWeight": "700"}],
+                        "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "headline-md": ["24px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "headline-lg-mobile": ["28px", {"lineHeight": "28px", "fontWeight": "700"}],
+                        "display-lg": ["48px", {"lineHeight": "48px", "letterSpacing": "0.02em", "fontWeight": "700"}],
+                        "metric-md": ["20px", {"lineHeight": "24px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 9999px;
+            display: inline-block;
+        }
+        .dashed-border {
+            border-bottom: 2px dashed #334155;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #464951;
+            border-radius: 2px;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body-md selection:bg-primary selection:text-on-primary">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-surface flex items-center justify-between px-container-margin h-16 w-full">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-primary text-headline-md" data-icon="fitness_center">fitness_center</span>
+<h1 class="font-headline-md text-headline-md uppercase tracking-wider text-primary">BULK CONTROL CENTER</h1>
+</div>
+<div class="flex items-center gap-md">
+<div class="flex gap-xs items-center">
+<!-- Sync Status Demo Variants -->
+<div class="group relative flex flex-col items-center">
+<span class="status-dot bg-secondary/40"></span>
+<span class="absolute -bottom-6 opacity-0 group-hover:opacity-100 transition-opacity text-[8px] uppercase font-bold tracking-tighter text-secondary">Local</span>
+</div>
+<div class="group relative flex flex-col items-center">
+<span class="status-dot bg-primary animate-pulse"></span>
+<span class="absolute -bottom-6 opacity-0 group-hover:opacity-100 transition-opacity text-[8px] uppercase font-bold tracking-tighter text-primary">Pending</span>
+</div>
+<div class="group relative flex flex-col items-center">
+<span class="status-dot bg-[#4ade80]"></span>
+<span class="absolute -bottom-6 opacity-0 group-hover:opacity-100 transition-opacity text-[8px] uppercase font-bold tracking-tighter text-[#4ade80]">Synced</span>
+</div>
+</div>
+<button class="active:scale-95 transition-transform hover:opacity-80">
+<span class="material-symbols-outlined text-on-surface" data-icon="sync">sync</span>
+</button>
+</div>
+</header>
+<main class="pt-24 pb-32 px-container-margin max-w-xl mx-auto min-h-screen flex flex-col gap-xl">
+<!-- State 1: Logged Out (Registration/Login Journey) -->
+<section class="flex flex-col items-center text-center gap-lg">
+<div class="w-16 h-16 flex items-center justify-center">
+<img alt="Bulk Logo" class="w-full h-full object-contain filter drop-shadow-[0_0_12px_rgba(242,163,60,0.3)]" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDwtsrJP-aRtx1rJAIiW2i5UVsAkaDMFlAHJRmrU3_M0qvgG35vLwWWTkGHNuOAGMKr5xfpOZKLQyYRjWCylWvGcLONz4y2zbWg8OZkOUNzLDmBN8Ml1kow7GI6MYvVfNFQj5v0B2xkNN0VtcRR6Vu3X8KRQ4NJlTipWAVFJUBDtir0sp4mWJYN70DESsOLOj4lXXFbkJ31YEXlaDUpL0UrjJ2PyuAEFDz-pKMbfDGtam3WBjgVEuRxKw"/>
+</div>
+<div class="space-y-xs">
+<h2 class="font-headline-lg-mobile text-headline-lg-mobile uppercase tracking-tight text-on-surface">SYNC YOUR GAINS</h2>
+<p class="font-body-md text-on-surface-variant max-w-sm mx-auto">
+                    Your data lives on this phone. Add an account to back it up and use it anywhere — no password needed.
+                </p>
+</div>
+<div class="w-full space-y-md">
+<div class="relative">
+<input class="w-full h-14 bg-surface-container border-2 border-outline-variant rounded-xl px-md text-on-surface placeholder:text-on-surface-variant/40 focus:border-primary focus:ring-0 transition-colors" placeholder="Enter your email" type="email"/>
+</div>
+<button class="w-full h-14 bg-primary-container text-on-primary-container font-headline-md text-headline-md uppercase rounded-xl active:scale-[0.98] transition-all hover:brightness-110 shadow-lg shadow-primary-container/10">
+                    SEND MAGIC LINK
+                </button>
+<div class="h-6 flex items-center justify-center">
+<span class="text-label-sm text-on-surface-variant opacity-0 animate-pulse">Checking credentials...</span>
+</div>
+</div></section>
+<div class="flex items-center justify-center gap-md py-md text-on-surface-variant/60">
+<div class="flex items-center gap-xs">
+<span class="material-symbols-outlined text-[16px]" data-icon="security" style="font-variation-settings: 'FILL' 1;">security</span>
+<span class="font-label-sm">Works fully offline</span>
+</div>
+<span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+<div class="font-label-sm">Local-first</div>
+<span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+<div class="font-label-sm">Free</div>
+</div>
+<!-- Visual Divider -->
+<div class="dashed-border w-full opacity-30"></div>
+<!-- State 2: Logged In (Demonstration Card) -->
+<section class="flex flex-col gap-md">
+<h3 class="font-label-sm uppercase tracking-[0.2em] text-on-surface-variant ml-xs">Active Session</h3>
+<div class="bg-surface-container border border-outline-variant rounded-xl p-md flex flex-col gap-md shadow-sm">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-md">
+<div class="w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-secondary" data-icon="person">person</span>
+</div>
+<div>
+<div class="font-body-lg font-semibold text-on-surface">user@example.com</div>
+<div class="flex items-center gap-xs mt-1">
+<span class="status-dot bg-[#4ade80]"></span>
+<span class="font-label-sm text-[#4ade80] uppercase tracking-wider">SYNCED</span>
+</div>
+</div>
+</div>
+<button class="text-label-sm text-on-surface-variant hover:text-error transition-colors uppercase font-bold px-xs py-1 border border-outline-variant rounded hover:border-error/50">
+                        Log out
+                    </button>
+</div>
+<div class="grid grid-cols-2 gap-md pt-md border-t border-outline-variant/30">
+<div class="space-y-1">
+<div class="font-label-sm text-on-surface-variant uppercase text-[10px]">Last Sync</div>
+<div class="font-metric-md text-metric-md text-primary">2 MIN AGO</div>
+</div>
+<div class="space-y-1">
+<div class="font-label-sm text-on-surface-variant uppercase text-[10px]">Cloud Storage</div>
+<div class="font-metric-md text-metric-md text-on-surface">12.4 KB</div>
+</div>
+</div>
+</div>
+<div class="bg-surface-container-low border border-outline-variant/30 rounded-xl p-md flex flex-col gap-md">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-xs">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="backup">backup</span>
+<span class="font-headline-md text-on-surface uppercase text-md">Backup Control</span>
+</div>
+<span class="text-[10px] font-metric-md text-on-surface-variant bg-surface-container px-2 py-0.5 rounded">v4.0.1</span>
+</div>
+<div class="flex gap-sm">
+<button class="flex-1 h-12 border border-outline-variant rounded-lg flex items-center justify-center gap-xs font-label-sm uppercase hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-[18px]" data-icon="upload">upload</span>
+                        Export
+                    </button>
+<button class="flex-1 h-12 border border-outline-variant rounded-lg flex items-center justify-center gap-xs font-label-sm uppercase hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-[18px]" data-icon="download">download</span>
+                        Import
+                    </button>
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 w-full z-50 bg-surface-container border-t border-outline-variant h-[72px] flex justify-around items-center px-xs pb-safe">
+<a class="flex flex-col items-center justify-center text-secondary hover:bg-surface-container-highest transition-colors active:scale-90 duration-150 w-full h-full" href="#">
+<span class="material-symbols-outlined" data-icon="exercise">exercise</span>
+<span class="font-label-sm text-[10px] uppercase mt-1">Train</span>
+</a>
+<a class="flex flex-col items-center justify-center text-secondary hover:bg-surface-container-highest transition-colors active:scale-90 duration-150 w-full h-full" href="#">
+<span class="material-symbols-outlined" data-icon="event_note">event_note</span>
+<span class="font-label-sm text-[10px] uppercase mt-1">Program</span>
+</a>
+<a class="flex flex-col items-center justify-center text-secondary hover:bg-surface-container-highest transition-colors active:scale-90 duration-150 w-full h-full" href="#">
+<span class="material-symbols-outlined" data-icon="restaurant">restaurant</span>
+<span class="font-label-sm text-[10px] uppercase mt-1">Food</span>
+</a>
+<a class="flex flex-col items-center justify-center text-primary font-bold transition-colors active:scale-90 duration-150 w-full h-full border-t-2 border-primary" href="#">
+<span class="material-symbols-outlined" data-icon="monitoring" style="font-variation-settings: 'FILL' 1;">monitoring</span>
+<span class="font-label-sm text-[10px] uppercase mt-1">Progress</span>
+</a>
+</nav>
+<script>
+        // Micro-interaction for the Send Magic Link button
+        const syncButton = document.querySelector('button.bg-primary-container');
+        const statusText = document.querySelector('.animate-pulse');
+        
+        syncButton.addEventListener('click', () => {
+            statusText.classList.remove('opacity-0');
+            statusText.textContent = 'Generating magic link...';
+            syncButton.disabled = true;
+            syncButton.style.opacity = '0.5';
+            
+            setTimeout(() => {
+                statusText.textContent = 'Link sent! Check your inbox.';
+                statusText.classList.remove('animate-pulse');
+                statusText.classList.add('text-primary');
+            }, 2000);
+        });
+    </script>
+</body></html>

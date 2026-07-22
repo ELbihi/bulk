@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Bulk Control Center - Sign In</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&amp;family=Inter:wght@400;600&amp;family=JetBrains+Mono:wght@600&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "surface-container-lowest": "#0c0e13",
+            "on-secondary": "#2d3038",
+            "inverse-surface": "#e2e2e9",
+            "on-surface": "#e2e2e9",
+            "on-secondary-fixed": "#191c22",
+            "secondary": "#c4c6cf",
+            "on-primary-fixed-variant": "#663e00",
+            "background": "#111318",
+            "surface-variant": "#33353a",
+            "surface-container-highest": "#33353a",
+            "surface-bright": "#37393f",
+            "outline": "#a08e7c",
+            "on-background": "#e2e2e9",
+            "on-error": "#690005",
+            "tertiary-container": "#4fbff4",
+            "tertiary-fixed-dim": "#79d1ff",
+            "surface-dim": "#111318",
+            "outline-variant": "#524436",
+            "on-primary-fixed": "#2b1700",
+            "inverse-on-surface": "#2e3036",
+            "secondary-container": "#464951",
+            "error": "#ffb4ab",
+            "on-primary": "#482a00",
+            "primary-fixed-dim": "#ffb964",
+            "primary-fixed": "#ffddba",
+            "surface-tint": "#ffb964",
+            "tertiary-fixed": "#c3e8ff",
+            "on-secondary-container": "#b6b8c1",
+            "tertiary": "#93d8ff",
+            "primary": "#f2a33c",
+            "on-surface-variant": "#d7c3b0",
+            "inverse-primary": "#875300",
+            "on-secondary-fixed-variant": "#44474e",
+            "on-tertiary-fixed-variant": "#004c68",
+            "on-error-container": "#ffdad6",
+            "surface-container": "#1e2025",
+            "primary-container": "#f2a33c",
+            "surface-container-high": "#282a2f",
+            "secondary-fixed": "#e0e2eb",
+            "on-primary-container": "#653d00",
+            "error-container": "#93000a",
+            "on-tertiary-container": "#004b67",
+            "surface": "#111318",
+            "surface-container-low": "#1a1c20",
+            "secondary-fixed-dim": "#c4c6cf",
+            "on-tertiary": "#003549",
+            "on-tertiary-fixed": "#001e2c"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "12px",
+            "full": "9999px"
+          },
+          "spacing": {
+            "xs": "8px",
+            "container-margin": "20px",
+            "md": "16px",
+            "xl": "32px",
+            "gutter": "16px",
+            "base": "4px",
+            "sm": "12px",
+            "lg": "24px"
+          },
+          "fontFamily": {
+            "body-lg": ["Inter"],
+            "headline-lg-mobile": ["Barlow Condensed"],
+            "metric-md": ["JetBrains Mono"],
+            "label-sm": ["Inter"],
+            "headline-lg": ["Barlow Condensed"],
+            "display-lg": ["Barlow Condensed"],
+            "body-md": ["Inter"],
+            "headline-md": ["Barlow Condensed"]
+          },
+          "fontSize": {
+            "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+            "headline-lg-mobile": ["28px", {"lineHeight": "28px", "fontWeight": "700"}],
+            "metric-md": ["20px", {"lineHeight": "24px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+            "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+            "headline-lg": ["32px", {"lineHeight": "32px", "letterSpacing": "0.02em", "fontWeight": "700"}],
+            "display-lg": ["48px", {"lineHeight": "48px", "letterSpacing": "0.02em", "fontWeight": "700"}],
+            "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+            "headline-md": ["24px", {"lineHeight": "28px", "fontWeight": "600"}]
+          }
+        },
+      },
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+    .active-state { display: flex !important; }
+    .hidden-state { display: none !important; }
+    
+    @keyframes spin-slow {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    .animate-spin-custom {
+      animation: spin-slow 1s linear infinite;
+    }
+    
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+  </style>
+</head>
+<body class="bg-background text-on-background min-h-screen font-body-md overflow-hidden select-none">
+<main class="relative w-full max-w-[390px] h-[844px] mx-auto overflow-hidden flex flex-col items-center py-16 px-container-margin">
+<!-- STATE 1: EMAIL STATE -->
+<div class="flex flex-col items-center w-full h-full animate-in fade-in duration-500" id="state-email">
+<!-- Logo Section -->
+<div class="mt-8 mb-12">
+<img alt="Bulk Control Dumbbell Logo" class="w-32 h-32 object-contain" src="https://lh3.googleusercontent.com/aida/AP1WRLsy5S0-qgLFfk58tF9NF3ra6P1DQsw1k5a_sS3SSsjPT_wGXSXVs5TeTlEufx68C1XVRsGMJtYON6noVK-jDDPeG-mENMKY813qLjzFLvVypVxj3h5eQR_NzFricer24lVIugNYeNUVt9aOdoJZreSTOojRN15DxUSOIXJ3WiS1R3GfvPRX4xxrySQ22HyR66tKXVrmSH91c4SwhjI0zFRLntTWmxd0BZbWxHp7hcfvJiovbdD40BzKt0kq"/>
+</div>
+<!-- Header Section -->
+<div class="text-center mb-12">
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile text-on-background uppercase tracking-tight mb-2">BULK CONTROL CENTER</h1>
+<p class="font-body-md text-on-surface-variant max-w-[280px] mx-auto">Log your lifts. Track your bulk. Own your progress.</p>
+</div>
+<!-- Input Section -->
+<div class="w-full space-y-4 mb-8">
+<div class="relative group">
+<input class="w-full h-16 bg-surface-container border border-surface-variant rounded-xl px-6 font-body-lg text-on-background focus:outline-none focus:border-primary transition-all placeholder:text-on-secondary-container" id="email-input" placeholder="Enter your email" type="email"/>
+</div>
+<button class="w-full h-16 bg-primary text-background font-headline-md text-headline-md uppercase rounded-xl active:scale-[0.98] transition-transform flex items-center justify-center font-bold" onclick="transitionTo('state-code')">
+        SEND CODE
+      </button>
+</div>
+<!-- Subtext -->
+<p class="text-center font-label-sm text-label-sm text-on-secondary-container max-w-[240px] mb-auto">
+      No password. We email you a 6-digit code.
+    </p>
+<!-- Reassurance Row -->
+<div class="flex items-center justify-center gap-2 text-on-secondary-container font-label-sm text-label-sm uppercase tracking-wider w-full pt-8">
+<span class="material-symbols-outlined text-[16px] text-primary">shield</span>
+<span>Offline-first</span>
+<span class="text-surface-variant">·</span>
+<span>Syncs when online</span>
+<span class="text-surface-variant">·</span>
+<span>Free</span>
+</div>
+</div>
+<!-- STATE 2: CODE STATE -->
+<div class="hidden-state flex flex-col items-center w-full h-full animate-in fade-in slide-in-from-bottom-4 duration-500" id="state-code">
+<div class="mt-8 mb-12">
+<img alt="Logo" class="w-20 h-20 object-contain opacity-60" src="https://lh3.googleusercontent.com/aida/AP1WRLsy5S0-qgLFfk58tF9NF3ra6P1DQsw1k5a_sS3SSsjPT_wGXSXVs5TeTlEufx68C1XVRsGMJtYON6noVK-jDDPeG-mENMKY813qLjzFLvVypVxj3h5eQR_NzFricer24lVIugNYeNUVt9aOdoJZreSTOojRN15DxUSOIXJ3WiS1R3GfvPRX4xxrySQ22HyR66tKXVrmSH91c4SwhjI0zFRLntTWmxd0BZbWxHp7hcfvJiovbdD40BzKt0kq"/>
+</div>
+<h2 class="font-headline-lg-mobile text-headline-lg-mobile text-on-background uppercase mb-2 text-center">ENTER YOUR CODE</h2>
+<p class="font-body-md text-on-surface-variant text-center mb-10">
+      We sent a 6-digit code to <br/>
+<span class="font-metric-md text-primary" id="display-email">USER@EXAMPLE.COM</span>
+</p>
+<!-- Code Input Row -->
+<div class="flex justify-between w-full mb-6" id="otp-container">
+<input class="w-[48px] h-[56px] bg-surface-container border border-surface-variant rounded-xl text-center font-metric-md text-xl text-primary focus:border-primary focus:outline-none transition-colors" maxlength="1" type="number"/>
+<input class="w-[48px] h-[56px] bg-surface-container border border-surface-variant rounded-xl text-center font-metric-md text-xl text-primary focus:border-primary focus:outline-none transition-colors" maxlength="1" type="number"/>
+<input class="w-[48px] h-[56px] bg-surface-container border border-surface-variant rounded-xl text-center font-metric-md text-xl text-primary focus:border-primary focus:outline-none transition-colors" maxlength="1" type="number"/>
+<input class="w-[48px] h-[56px] bg-surface-container border border-surface-variant rounded-xl text-center font-metric-md text-xl text-primary focus:border-primary focus:outline-none transition-colors" maxlength="1" type="number"/>
+<input class="w-[48px] h-[56px] bg-surface-container border border-surface-variant rounded-xl text-center font-metric-md text-xl text-primary focus:border-primary focus:outline-none transition-colors" maxlength="1" type="number"/>
+<input class="w-[48px] h-[56px] bg-surface-container border border-surface-variant rounded-xl text-center font-metric-md text-xl text-primary focus:border-primary focus:outline-none transition-colors" maxlength="1" type="number"/>
+</div>
+<!-- Error Placeholder -->
+<div class="h-6 mb-6">
+<p class="text-error text-label-sm font-label-sm hidden-state" id="error-msg">Wrong code — try again</p>
+</div>
+<div class="w-full space-y-4 mb-auto">
+<button class="w-full h-16 bg-primary text-background font-headline-md text-headline-md uppercase rounded-xl active:scale-[0.98] transition-transform flex items-center justify-center font-bold" onclick="transitionTo('state-syncing')">
+        VERIFY &amp; ENTER
+      </button>
+<div class="flex flex-col items-center gap-4 pt-4">
+<button class="font-label-sm text-label-sm text-on-secondary-container uppercase tracking-widest flex items-center gap-2" id="resend-btn">
+          Resend code <span class="font-metric-md text-primary tracking-tighter" id="countdown">0:42</span>
+</button>
+<button class="font-label-sm text-label-sm text-on-secondary-container/60 uppercase underline underline-offset-4" onclick="transitionTo('state-email')">
+          Change email
+        </button>
+</div>
+</div>
+</div>
+<!-- STATE 3: ENTERING STATE -->
+<div class="hidden-state flex flex-col items-center justify-center w-full h-full animate-in zoom-in-95 duration-500" id="state-syncing">
+<div class="mb-12 relative">
+<img alt="Logo" class="w-24 h-24 object-contain opacity-40 grayscale" src="https://lh3.googleusercontent.com/aida/AP1WRLsy5S0-qgLFfk58tF9NF3ra6P1DQsw1k5a_sS3SSsjPT_wGXSXVs5TeTlEufx68C1XVRsGMJtYON6noVK-jDDPeG-mENMKY813qLjzFLvVypVxj3h5eQR_NzFricer24lVIugNYeNUVt9aOdoJZreSTOojRN15DxUSOIXJ3WiS1R3GfvPRX4xxrySQ22HyR66tKXVrmSH91c4SwhjI0zFRLntTWmxd0BZbWxHp7hcfvJiovbdD40BzKt0kq"/>
+<div class="absolute inset-0 flex items-center justify-center scale-125">
+<div class="w-32 h-32 border-4 border-primary border-t-transparent rounded-full animate-spin-custom"></div>
+</div>
+</div>
+<h3 class="font-headline-md text-headline-md text-primary uppercase tracking-widest animate-pulse">SYNCING YOUR GAINS...</h3>
+<p class="font-metric-md text-label-sm text-on-secondary-container mt-4 uppercase">Initializing secure vault</p>
+</div>
+<!-- Dev Toggles -->
+<div class="absolute bottom-4 left-0 w-full flex justify-center gap-2 px-4 pointer-events-none">
+<div class="bg-surface-container-highest/50 backdrop-blur-md rounded-full px-3 py-1 flex gap-4 pointer-events-auto border border-surface-variant">
+<button class="w-2 h-2 rounded-full bg-on-background opacity-20 hover:opacity-100 transition-opacity" onclick="transitionTo('state-email')"></button>
+<button class="w-2 h-2 rounded-full bg-on-background opacity-20 hover:opacity-100 transition-opacity" onclick="transitionTo('state-code')"></button>
+<button class="w-2 h-2 rounded-full bg-on-background opacity-20 hover:opacity-100 transition-opacity" onclick="transitionTo('state-syncing')"></button>
+</div>
+</div>
+</main>
+<script>
+  function transitionTo(stateId) {
+    const states = ['state-email', 'state-code', 'state-syncing'];
+    const emailInput = document.getElementById('email-input');
+    const displayEmail = document.getElementById('display-email');
+    const errorMsg = document.getElementById('error-msg');
+
+    if (stateId === 'state-code' && emailInput.value) {
+      displayEmail.innerText = emailInput.value.toUpperCase();
+      // Clear error on transition
+      errorMsg.classList.add('hidden-state');
+    }
+
+    states.forEach(id => {
+      const el = document.getElementById(id);
+      if (id === stateId) {
+        el.classList.remove('hidden-state');
+        el.classList.add('active-state');
+      } else {
+        el.classList.remove('active-state');
+        el.classList.add('hidden-state');
+      }
+    });
+
+    // Auto-focus first input when entering code state
+    if (stateId === 'state-code') {
+      setTimeout(() => {
+        const inputs = document.querySelectorAll('#otp-container input');
+        inputs[0].focus();
+      }, 500);
+    }
+  }
+
+  // OTP Input Logic
+  const otpInputs = document.querySelectorAll('#otp-container input');
+  otpInputs.forEach((input, index) => {
+    input.addEventListener('input', (e) => {
+      if (e.target.value.length === 1 && index < otpInputs.length - 1) {
+        otpInputs[index + 1].focus();
+      }
+    });
+
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Backspace' && !e.target.value && index > 0) {
+        otpInputs[index - 1].focus();
+      }
+    });
+  });
+
+  // Demo: Show error for a moment
+  document.querySelector('#state-code button[onclick*="syncing"]').addEventListener('click', (e) => {
+    // This is just for the demo interaction flow
+    // In a real app, transitionTo would be called after validation
+  });
+
+  // Simple countdown demo
+  let seconds = 42;
+  const countdownEl = document.getElementById('countdown');
+  setInterval(() => {
+    if (seconds > 0) {
+      seconds--;
+      countdownEl.innerText = `0:${seconds.toString().padStart(2, '0')}`;
+    }
+  }, 1000);
+</script>
+</body></html>

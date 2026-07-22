@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Bulk Control Center - Training Log</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@600&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@100..900&family=Inter:wght@100..900&display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .dashed-divider {
+            background-image: linear-gradient(to right, #334155 50%, rgba(255,255,255,0) 0%);
+            background-position: bottom;
+            background-size: 8px 1px;
+            background-repeat: repeat-x;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #111318;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #f2a33c;
+            border-radius: 10px;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary": "#c4c6cf",
+                        "on-secondary": "#2d3038",
+                        "surface-dim": "#111318",
+                        "surface-container": "#1e2025",
+                        "on-background": "#e2e2e9",
+                        "on-secondary-fixed": "#191c22",
+                        "primary-fixed-dim": "#ffb964",
+                        "tertiary": "#93d8ff",
+                        "surface-bright": "#37393f",
+                        "tertiary-fixed": "#c3e8ff",
+                        "on-tertiary-fixed": "#001e2c",
+                        "background": "#111318",
+                        "outline-variant": "#524436",
+                        "surface-container-highest": "#33353a",
+                        "primary-container": "#f2a33c",
+                        "secondary-fixed-dim": "#c4c6cf",
+                        "on-primary-fixed": "#2b1700",
+                        "on-error-container": "#ffdad6",
+                        "on-tertiary": "#003549",
+                        "error": "#ffb4ab",
+                        "primary": "#ffc482",
+                        "on-secondary-container": "#b6b8c1",
+                        "surface-container-lowest": "#0c0e13",
+                        "surface-container-low": "#1a1c20",
+                        "secondary-container": "#464951",
+                        "on-tertiary-container": "#004b67",
+                        "on-primary": "#482a00",
+                        "inverse-surface": "#e2e2e9",
+                        "on-error": "#690005",
+                        "error-container": "#93000a",
+                        "surface-variant": "#33353a",
+                        "tertiary-container": "#4fbff4",
+                        "surface-tint": "#ffb964",
+                        "on-surface-variant": "#d7c3b0",
+                        "inverse-on-surface": "#2e3036",
+                        "surface-container-high": "#282a2f",
+                        "on-primary-container": "#653d00",
+                        "surface": "#111318",
+                        "outline": "#a08e7c",
+                        "on-secondary-fixed-variant": "#44474e",
+                        "on-surface": "#e2e2e9",
+                        "primary-fixed": "#ffddba",
+                        "on-primary-fixed-variant": "#663e00",
+                        "tertiary-fixed-dim": "#79d1ff",
+                        "secondary-fixed": "#e0e2eb",
+                        "inverse-primary": "#875300",
+                        "on-tertiary-fixed-variant": "#004c68"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "xs": "8px",
+                        "container-margin": "20px",
+                        "sm": "12px",
+                        "gutter": "16px",
+                        "base": "4px",
+                        "lg": "24px",
+                        "xl": "32px",
+                        "md": "16px"
+                    },
+                    "fontFamily": {
+                        "headline-lg-mobile": ["Barlow Condensed"],
+                        "body-lg": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "body-md": ["Inter"],
+                        "headline-md": ["Barlow Condensed"],
+                        "display-lg": ["Barlow Condensed"],
+                        "headline-lg": ["Barlow Condensed"],
+                        "metric-md": ["JetBrains Mono"]
+                    },
+                    "fontSize": {
+                        "headline-lg-mobile": ["28px", {"lineHeight": "28px", "fontWeight": "700"}],
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                        "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "headline-md": ["24px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "display-lg": ["48px", {"lineHeight": "48px", "letterSpacing": "0.02em", "fontWeight": "700"}],
+                        "headline-lg": ["32px", {"lineHeight": "32px", "letterSpacing": "0.02em", "fontWeight": "700"}],
+                        "metric-md": ["20px", {"lineHeight": "24px", "letterSpacing": "-0.02em", "fontWeight": "600"}]
+                    }
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background text-on-background font-body-md custom-scrollbar selection:bg-primary selection:text-on-primary">
+<!-- Top App Bar -->
+<header class="bg-background dark:bg-background text-primary dark:text-primary docked full-width top-0 z-50 sticky">
+<div class="flex justify-between items-center px-container-margin py-sm w-full">
+<div class="flex items-center gap-md">
+<button class="hover:opacity-80 transition-opacity active:scale-95 transition-transform duration-100">
+<span class="material-symbols-outlined text-primary">menu</span>
+</button>
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile uppercase font-bold text-primary dark:text-primary tracking-tighter">BULK CONTROL CENTER</h1>
+</div>
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-on-surface-variant">timer</span>
+<span class="font-metric-md text-metric-md text-primary">45:12</span>
+</div>
+</div>
+</header>
+<main class="pb-32 px-container-margin">
+<!-- Hero Header -->
+<section class="py-lg">
+<div class="flex flex-col gap-base">
+<span class="font-label-sm text-label-sm text-primary uppercase tracking-widest">Active Session</span>
+<h2 class="font-display-lg text-display-lg uppercase leading-none tracking-tight">TUE — PUSH DAY</h2>
+</div>
+</section>
+<!-- Exercise List -->
+<div class="flex flex-col gap-gutter">
+<!-- Card 1: Bench Press -->
+<div class="bg-surface-container rounded-xl border border-outline-variant/30 overflow-hidden shadow-sm">
+<div class="p-md flex justify-between items-start border-b border-outline-variant/20">
+<div>
+<h3 class="font-headline-md text-headline-md uppercase tracking-wide">Bench Press</h3>
+<p class="text-on-surface-variant text-label-sm uppercase mt-base opacity-70">Last: 100kg x 8</p>
+</div>
+<span class="bg-primary-container text-on-primary-container font-label-sm text-label-sm px-sm py-base rounded-full">4X6-8</span>
+</div>
+<div class="p-md space-y-sm">
+<!-- Set Header Labels -->
+<div class="grid grid-cols-12 gap-sm mb-xs">
+<div class="col-span-2 font-label-sm text-label-sm text-on-surface-variant opacity-60 uppercase">Set</div>
+<div class="col-span-4 font-label-sm text-label-sm text-on-surface-variant opacity-60 uppercase text-center">KG</div>
+<div class="col-span-4 font-label-sm text-label-sm text-on-surface-variant opacity-60 uppercase text-center">Reps</div>
+<div class="col-span-2"></div>
+</div>
+<!-- Set Rows -->
+<div class="space-y-xs">
+<!-- Set 1 (Completed) -->
+<div class="grid grid-cols-12 gap-sm items-center py-base dashed-divider">
+<div class="col-span-2 font-metric-md text-metric-md text-secondary">1</div>
+<div class="col-span-4">
+<div class="flex items-center justify-center bg-surface-container-low rounded-lg p-base border border-outline-variant/20">
+<span class="font-metric-md text-metric-md text-on-surface">100</span>
+</div>
+</div>
+<div class="col-span-4">
+<div class="flex items-center justify-center bg-surface-container-low rounded-lg p-base border border-outline-variant/20">
+<span class="font-metric-md text-metric-md text-on-surface">8</span>
+</div>
+</div>
+<div class="col-span-2 flex justify-end">
+<button class="w-10 h-10 flex items-center justify-center rounded bg-primary text-on-primary shadow-sm active:scale-90 transition-transform">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</button>
+</div>
+</div>
+<!-- Set 2 (Current) -->
+<div class="grid grid-cols-12 gap-sm items-center py-base dashed-divider">
+<div class="col-span-2 font-metric-md text-metric-md text-primary">2</div>
+<div class="col-span-4">
+<div class="flex items-center justify-center bg-surface-container-highest rounded-lg p-base border border-primary/40 ring-1 ring-primary/20">
+<span class="font-metric-md text-metric-md text-primary">100</span>
+</div>
+</div>
+<div class="col-span-4">
+<div class="flex items-center justify-center bg-surface-container-highest rounded-lg p-base border border-primary/40 ring-1 ring-primary/20">
+<span class="font-metric-md text-metric-md text-primary">8</span>
+</div>
+</div>
+<div class="col-span-2 flex justify-end">
+<button class="w-10 h-10 flex items-center justify-center rounded border border-primary/40 bg-surface-container-low text-primary active:scale-90 transition-transform">
+<span class="material-symbols-outlined">radio_button_unchecked</span>
+</button>
+</div>
+</div>
+<!-- Set 3 (Upcoming) -->
+<div class="grid grid-cols-12 gap-sm items-center py-base">
+<div class="col-span-2 font-metric-md text-metric-md text-on-surface-variant opacity-40">3</div>
+<div class="col-span-4">
+<div class="flex items-center justify-center bg-surface-container-low rounded-lg p-base border border-outline-variant/10 opacity-50">
+<span class="font-metric-md text-metric-md text-on-surface-variant">100</span>
+</div>
+</div>
+<div class="col-span-4">
+<div class="flex items-center justify-center bg-surface-container-low rounded-lg p-base border border-outline-variant/10 opacity-50">
+<span class="font-metric-md text-metric-md text-on-surface-variant">8</span>
+</div>
+</div>
+<div class="col-span-2 flex justify-end">
+<button class="w-10 h-10 flex items-center justify-center rounded border border-outline-variant/10 bg-surface-container-low text-on-surface-variant opacity-40">
+<span class="material-symbols-outlined">radio_button_unchecked</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Card 2: Overhead Press -->
+<div class="bg-surface-container rounded-xl border border-outline-variant/30 overflow-hidden shadow-sm opacity-90">
+<div class="p-md flex justify-between items-start border-b border-outline-variant/20">
+<div>
+<h3 class="font-headline-md text-headline-md uppercase tracking-wide">Overhead Press</h3>
+<p class="text-on-surface-variant text-label-sm uppercase mt-base opacity-70">Last: 60kg x 10</p>
+</div>
+<span class="bg-secondary-container text-on-secondary-container font-label-sm text-label-sm px-sm py-base rounded-full">3X8-10</span>
+</div>
+<div class="p-md text-center py-lg">
+<button class="bg-outline-variant/20 hover:bg-outline-variant/30 text-primary px-lg py-sm rounded-lg font-label-sm text-label-sm uppercase tracking-widest transition-colors flex items-center gap-xs mx-auto">
+<span class="material-symbols-outlined text-[18px]">add</span>
+                        Start Exercise
+                    </button>
+</div>
+</div>
+<!-- Performance Bento Card -->
+<div class="grid grid-cols-2 gap-gutter">
+<div class="bg-surface-container rounded-xl p-md border border-outline-variant/30 flex flex-col justify-between aspect-square">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase">Volume</span>
+<div class="flex flex-col">
+<span class="font-display-lg text-headline-lg-mobile text-primary">2,400</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase">Kilograms</span>
+</div>
+</div>
+<div class="bg-surface-container rounded-xl p-md border border-outline-variant/30 flex flex-col justify-between aspect-square">
+<div class="flex justify-between items-center w-full">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase">Pace</span>
+<span class="material-symbols-outlined text-tertiary text-[20px]">bolt</span>
+</div>
+<div class="flex flex-col">
+<span class="font-display-lg text-headline-lg-mobile text-tertiary">Optimal</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase">Rest Cycles</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Sticky Bottom CTA -->
+<div class="fixed bottom-20 left-0 w-full px-container-margin z-40 pointer-events-none">
+<button class="pointer-events-auto w-full bg-primary-container text-on-primary-container font-headline-md text-headline-md uppercase py-md rounded-xl shadow-2xl active:scale-95 transition-all duration-150 flex items-center justify-center gap-sm">
+                SAVE SESSION
+                <span class="material-symbols-outlined">save</span>
+</button>
+</div>
+</main>
+<!-- Bottom Navigation Bar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center h-16 px-xs bg-surface-container dark:bg-surface-container border-t border-outline-variant shadow-lg rounded-t-xl">
+<a class="flex flex-col items-center justify-center text-primary dark:text-primary font-bold hover:bg-surface-bright dark:hover:bg-surface-bright active:scale-90 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">fitness_center</span>
+<span class="font-label-sm text-label-sm uppercase">TRAIN</span>
+</a>
+<a class="flex flex-col items-center justify-center text-secondary dark:text-secondary opacity-60 hover:bg-surface-bright dark:hover:bg-surface-bright active:scale-90 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined">calendar_today</span>
+<span class="font-label-sm text-label-sm uppercase">PROGRAM</span>
+</a>
+<a class="flex flex-col items-center justify-center text-secondary dark:text-secondary opacity-60 hover:bg-surface-bright dark:hover:bg-surface-bright active:scale-90 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined">restaurant</span>
+<span class="font-label-sm text-label-sm uppercase">FOOD</span>
+</a>
+<a class="flex flex-col items-center justify-center text-secondary dark:text-secondary opacity-60 hover:bg-surface-bright dark:hover:bg-surface-bright active:scale-90 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined">monitoring</span>
+<span class="font-label-sm text-label-sm uppercase">PROGRESS</span>
+</a>
+</nav>
+<script>
+        // Micro-interactions for input focus and completion
+        document.querySelectorAll('button').forEach(btn => {
+            btn.addEventListener('click', function() {
+                if(this.querySelector('.material-symbols-outlined')?.innerText === 'radio_button_unchecked') {
+                    const span = this.querySelector('.material-symbols-outlined');
+                    span.innerText = 'check_circle';
+                    span.style.fontVariationSettings = "'FILL' 1";
+                    this.classList.remove('border-primary/40', 'bg-surface-container-low', 'text-primary');
+                    this.classList.add('bg-primary', 'text-on-primary');
+                }
+            });
+        });
+
+        // Simple duration counter
+        let seconds = 2712; // Starting at 45:12
+        const timerDisplay = document.querySelector('.font-metric-md.text-primary');
+        setInterval(() => {
+            seconds++;
+            const mins = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            timerDisplay.innerText = `${mins}:${secs.toString().padStart(2, '0')}`;
+        }, 1000);
+    </script>
+</body></html>
