@@ -271,7 +271,51 @@
   .gate-dots{display:flex;gap:5px;margin-top:24px}
   .gate-dots i{width:6px;height:6px;border-radius:50%;background:var(--line)}
   .gate-dots i.on{background:var(--amber-text)}
+  /* splash screen */
+  #splash{position:fixed;inset:0;z-index:2000;background:#111318;display:flex;align-items:center;justify-content:center;transition:opacity .3s ease}
+  #splash.hide{opacity:0;pointer-events:none}
+  .splash-inner{display:flex;flex-direction:column;align-items:center;gap:14px}
+  .splash-logo{width:64px;height:64px;border-radius:18px;background:var(--card2);border:1px solid var(--amber-text);display:flex;align-items:center;justify-content:center;opacity:0;transform:scale(.6);animation:splashLogoIn .4s cubic-bezier(.34,1.56,.64,1) forwards}
+  .splash-logo svg{width:32px;height:32px;stroke:var(--amber-text);fill:none;stroke-width:1.8}
+  .splash-name{font-family:var(--disp);font-weight:800;font-size:20px;letter-spacing:.5px;text-transform:uppercase;color:var(--ink);opacity:0;animation:splashFadeIn .3s ease forwards;animation-delay:.35s}
+  .splash-bar-track{width:120px;height:2px;background:var(--line);border-radius:2px;overflow:hidden;margin-top:2px;opacity:0;animation:splashFadeIn .3s ease forwards;animation-delay:.35s}
+  .splash-bar-track i{display:block;height:100%;width:0%;background:var(--amber);animation:splashBarFill 1.6s linear forwards;animation-delay:.4s}
+  @keyframes splashLogoIn{0%{opacity:0;transform:scale(.6)}60%{opacity:1;transform:scale(1.08)}100%{opacity:1;transform:scale(1)}}
+  @keyframes splashFadeIn{to{opacity:1}}
+  @keyframes splashBarFill{to{width:100%}}
+  @media (prefers-reduced-motion: reduce){
+    .splash-logo{animation:none;opacity:1;transform:scale(1)}
+    .splash-name,.splash-bar-track{animation:none;opacity:1}
+    .splash-bar-track i{animation:none;width:100%}
+  }
 </style>
+
+<div id="splash">
+  <div class="splash-inner">
+    <div class="splash-logo"><svg viewBox="0 0 24 24"><path d="M6.5 8v8M17.5 8v8M3 10v4M21 10v4M6.5 12h11" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    <div class="splash-name">Bulk Control Center</div>
+    <div class="splash-bar-track"><i id="splashBarFill"></i></div>
+  </div>
+</div>
+<script>
+(function(){
+  var minElapsed=false, initDone=false;
+  function tryDismiss(){
+    if(!minElapsed || !initDone) return;
+    var el=document.getElementById('splash');
+    if(!el) return;
+    el.classList.add('hide');
+    setTimeout(function(){ el.style.display='none'; el.remove(); }, 320);
+  }
+  setTimeout(function(){ minElapsed=true; tryDismiss(); }, 2000);
+  window.markSplashInitDone=function(){
+    if(initDone) return;
+    initDone=true;
+    tryDismiss();
+  };
+  setTimeout(function(){ window.markSplashInitDone(); }, 6000); // safety net if init never signals (e.g. offline first load)
+})();
+</script>
 
 <div id="authGate">
   <div class="gate-state" id="gateEmail" style="display:flex">
@@ -1439,16 +1483,18 @@ function revealApp(){
 }
 async function initCloud(){
   const client=sb();
-  if(!client){ revealApp(); return; }
+  if(!client){ revealApp(); window.markSplashInitDone&&window.markSplashInitDone(); return; }
   const {data:{session}}=await client.auth.getSession();
   SESSION=session;
   if(SESSION){
     revealApp();
+    window.markSplashInitDone&&window.markSplashInitDone();
     renderAcct();
     await pullAndMerge();
     await sync();
   } else {
     showGate('gateEmail');
+    window.markSplashInitDone&&window.markSplashInitDone();
   }
   client.auth.onAuthStateChange((_evt,newSession)=>{
     if(newSession && !SESSION){
