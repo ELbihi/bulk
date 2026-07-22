@@ -197,6 +197,28 @@
   .meal-done{width:32px;height:32px;border-radius:50%;background:var(--amber);color:var(--amber-ink);display:flex;align-items:center;justify-content:center;flex-shrink:0}
   .meal-done svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:3}
   .meal-edit-row{display:grid;grid-template-columns:1fr 90px 70px 30px;gap:5px;margin-bottom:6px}
+  #scanPanel{margin-top:12px;border-top:1px solid var(--line);padding-top:12px}
+  .scan-loading{display:flex;flex-direction:column;align-items:center;gap:12px;padding:20px 0;text-align:center}
+  .scan-spinner{width:32px;height:32px;border-radius:50%;border:3px solid var(--card2);border-top-color:var(--amber);animation:scanSpin .8s linear infinite}
+  @keyframes scanSpin{to{transform:rotate(360deg)}}
+  .scan-loading p{color:var(--dim);font-size:13px}
+  .scan-error{color:var(--red);font-size:13px;text-align:center;padding:14px 0}
+  .scan-items{margin-bottom:10px}
+  .scan-item{display:flex;justify-content:space-between;gap:8px;padding:7px 0;border-bottom:1px dashed var(--dash);font-size:13.5px}
+  .scan-item:last-child{border-bottom:none}
+  .scan-item-name{font-weight:600}
+  .scan-item-portion{color:var(--dim);font-size:11.5px;display:block}
+  .scan-item-kcal{font-family:var(--mono);color:var(--amber-text);font-weight:600;white-space:nowrap;flex-shrink:0}
+  .scan-total-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:12px 0;padding:12px;background:var(--card2);border:1px solid var(--line);border-radius:12px}
+  .scan-total-label{color:var(--dim);font-size:11px;text-transform:uppercase;letter-spacing:.06em}
+  .scan-total-input{width:110px;font-family:var(--mono);font-size:26px;font-weight:700;color:var(--amber-text);background:none;border:none;border-bottom:2px solid var(--amber-text);text-align:right;padding:2px 0;min-height:auto}
+  .scan-confidence{display:inline-block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;padding:3px 9px;border-radius:999px;margin-bottom:8px}
+  .scan-confidence.high{background:var(--green);color:#0a2e17}
+  .scan-confidence.medium{background:var(--amber);color:var(--amber-ink)}
+  .scan-confidence.low{background:var(--red);color:#3a0505}
+  .scan-low-warn{color:var(--red);font-size:12px;margin-bottom:10px}
+  .scan-actions{display:flex;gap:8px}
+  .scan-actions .btn{margin-top:0}
   .addrow{display:grid;grid-template-columns:1fr auto;gap:8px;margin-top:8px}
   .addrow .btn{margin-top:0;width:auto}
   /* progress */
@@ -505,7 +527,10 @@
         <input type="number" id="kcalAdd" placeholder="Add kcal..." inputmode="numeric">
         <button class="btn sm" id="addKcal">+ Add</button>
       </div>
+      <button class="btn ghost sm" id="scanMealBtn">📸 Scan meal</button>
+      <input type="file" id="scanFileInput" accept="image/*" capture="environment" style="display:none">
       <button class="btn ghost sm" id="resetKcal">Reset day</button>
+      <div id="scanPanel" style="display:none"></div>
     </div>
     <div class="card">
       <div style="display:flex;justify-content:space-between;align-items:center">
@@ -1033,6 +1058,128 @@ document.getElementById('setKcal').onclick = async ()=>{
   const v=+document.getElementById('kcalTarget').value; if(v<1800||v>5000){toast('Enter 1800–5000');return}
   DB.kcalTarget=v; document.getElementById('kcalTarget').value='';
   await save(); renderFood(); toast('Target updated');
+};
+
+/* ── AI food photo scan ── */
+const EDGE_FUNCTION_URL='https://uygfgmvotznsbtkngpeb.functions.supabase.co/estimate-food';
+let SCAN_LAST=null;
+function downscaleImageToBase64(file){
+  return new Promise((resolve,reject)=>{
+    const reader=new FileReader();
+    reader.onload=()=>{
+      const img=new Image();
+      img.onload=()=>{
+        const maxDim=1024;
+        let w=img.width, h=img.height;
+        if(w>maxDim||h>maxDim){
+          if(w>h){ h=Math.round(h*maxDim/w); w=maxDim; } else { w=Math.round(w*maxDim/h); h=maxDim; }
+        }
+        const canvas=document.createElement('canvas');
+        canvas.width=w; canvas.height=h;
+        canvas.getContext('2d').drawImage(img,0,0,w,h);
+        const dataUrl=canvas.toDataURL('image/jpeg',0.8);
+        resolve(dataUrl.split(',')[1]);
+      };
+      img.onerror=()=>reject(new Error('Could not read that image'));
+      img.src=reader.result;
+    };
+    reader.onerror=()=>reject(new Error('Could not read that file'));
+    reader.readAsDataURL(file);
+  });
+}
+async function callEstimateFood(base64){
+  const token=SESSION && SESSION.access_token;
+  const controller=new AbortController();
+  const timer=setTimeout(()=>controller.abort(),30000);
+  let res;
+  try{
+    res=await fetch(EDGE_FUNCTION_URL,{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},
+      body:JSON.stringify({image:base64}),
+      signal:controller.signal
+    });
+  }catch(e){
+    clearTimeout(timer);
+    if(e && e.name==='AbortError') throw new Error('Request timed out — try again.');
+    throw new Error('Could not reach the scan service — check your connection.');
+  }
+  clearTimeout(timer);
+  const data=await res.json().catch(()=>null);
+  if(!res.ok) throw new Error((data && data.error) || ('Scan failed ('+res.status+')'));
+  return data;
+}
+function showScanLoading(){
+  const panel=document.getElementById('scanPanel');
+  panel.style.display='block';
+  panel.innerHTML=`<div class="scan-loading"><div class="scan-spinner"></div><p>Analyzing your meal…</p></div>`;
+}
+function closeScanPanel(){
+  document.getElementById('scanPanel').style.display='none';
+  document.getElementById('scanPanel').innerHTML='';
+  SCAN_LAST=null;
+}
+function retakeScan(){
+  closeScanPanel();
+  document.getElementById('scanFileInput').click();
+}
+function showScanError(msg){
+  const panel=document.getElementById('scanPanel');
+  panel.style.display='block';
+  panel.innerHTML=`<div class="scan-error">${msg}</div><div class="scan-actions"><button class="btn ghost sm" id="scanRetryBtn" style="flex:1">Retake</button></div>`;
+  document.getElementById('scanRetryBtn').onclick=retakeScan;
+}
+function showScanResult(data){
+  SCAN_LAST=data;
+  const conf=(data.confidence==='low'||data.confidence==='high')?data.confidence:'medium';
+  const items=Array.isArray(data.items)?data.items:[];
+  const itemsHtml=items.map(it=>`<div class="scan-item"><div><div class="scan-item-name">${it.name||'Item'}</div><span class="scan-item-portion">${it.portion||''}</span></div><div class="scan-item-kcal">${it.kcal||0} kcal</div></div>`).join('');
+  const total=+data.total_kcal||0;
+  const panel=document.getElementById('scanPanel');
+  panel.style.display='block';
+  panel.innerHTML=`
+    <span class="scan-confidence ${conf}">${conf} confidence</span>
+    ${conf==='low'?'<div class="scan-low-warn">Rough estimate — double-check before adding.</div>':''}
+    <div class="scan-items">${itemsHtml || '<div class="muted">No items detected.</div>'}</div>
+    <div class="scan-total-row">
+      <span class="scan-total-label">Total kcal</span>
+      <input type="number" inputmode="numeric" class="scan-total-input" id="scanTotalInput" value="${total}">
+    </div>
+    <div class="scan-actions">
+      <button class="btn ghost sm" id="scanRetakeBtn" style="flex:1">Retake</button>
+      <button class="btn sm" id="scanAddBtn" style="flex:1">Add ${total} kcal</button>
+    </div>`;
+  const totalInput=document.getElementById('scanTotalInput');
+  const addBtn=document.getElementById('scanAddBtn');
+  totalInput.oninput=()=>{ addBtn.textContent='Add '+(+totalInput.value||0)+' kcal'; };
+  addBtn.onclick=async()=>{
+    const v=+totalInput.value||0;
+    if(!v){toast('Enter a valid kcal amount');return}
+    DB.food[todayKey()]=(DB.food[todayKey()]||0)+v;
+    await save(); renderFood();
+    closeScanPanel();
+    toast('Added '+v+' kcal from scan ✓');
+  };
+  document.getElementById('scanRetakeBtn').onclick=retakeScan;
+}
+document.getElementById('scanMealBtn').onclick=()=>{
+  const client=sb();
+  if(!client || !SESSION){ toast('Sign in to use meal scanning'); return; }
+  if(!navigator.onLine){ toast('Scan needs a connection'); return; }
+  document.getElementById('scanFileInput').click();
+};
+document.getElementById('scanFileInput').onchange=async(ev)=>{
+  const file=ev.target.files[0];
+  ev.target.value='';
+  if(!file)return;
+  showScanLoading();
+  try{
+    const base64=await downscaleImageToBase64(file);
+    const data=await callEstimateFood(base64);
+    showScanResult(data);
+  }catch(e){
+    showScanError((e && e.message) || 'Could not analyze this photo. Try again.');
+  }
 };
 
 /* ── calorie target calculator ── */
