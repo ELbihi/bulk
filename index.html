@@ -14,22 +14,27 @@
     --green:#4ade80; --red:#ffb4ab; --steel:#c4c6cf; --blue:#93d8ff;
     --disp:'Barlow Condensed',Impact,sans-serif; --body:'Inter',system-ui,sans-serif; --mono:'JetBrains Mono',ui-monospace,monospace;
   }
-  *{box-sizing:border-box;margin:0;padding:0}
-  body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;padding-bottom:84px}
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  html{background:var(--bg);overscroll-behavior-y:none;overflow-x:hidden}
+  body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;padding-bottom:calc(84px + env(safe-area-inset-bottom));overflow-x:hidden;overscroll-behavior-y:none;-webkit-overflow-scrolling:touch}
   .wrap{max-width:560px;margin:0 auto;padding:16px 14px}
   header.top{padding:14px 14px 6px}
+  @media (display-mode: standalone){
+    header.top{padding-top:calc(14px + env(safe-area-inset-top))}
+  }
   .topbar{display:flex;align-items:center;justify-content:space-between;gap:10px;max-width:560px;margin:0 auto}
-  .topbar-left{display:flex;align-items:center;gap:10px}
-  .hamburger{background:none;border:none;color:var(--amber-text);padding:4px;cursor:default;min-width:32px;min-height:32px}
+  .topbar-left{display:flex;align-items:center;gap:10px;min-width:0;flex:1}
+  .hamburger{background:none;border:none;color:var(--amber-text);padding:4px;cursor:default;min-width:32px;min-height:32px;flex-shrink:0;touch-action:manipulation}
   .hamburger svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2}
-  header.top h1{font-family:var(--disp);font-weight:800;font-size:22px;letter-spacing:.5px;text-transform:uppercase;line-height:1;color:var(--amber-text)}
-  .session-timer{display:flex;align-items:center;gap:6px;color:var(--dim);font-family:var(--mono);font-size:15px;font-weight:600}
+  header.top h1{font-family:var(--disp);font-weight:800;font-size:clamp(17px,5vw,22px);letter-spacing:.5px;text-transform:uppercase;line-height:1;color:var(--amber-text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+  .session-timer{display:flex;align-items:center;gap:6px;color:var(--dim);font-family:var(--mono);font-size:15px;font-weight:600;flex-shrink:0}
   .session-timer svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2}
   .session-timer.live{color:var(--amber-text)}
   header.top p{color:var(--dim);font-size:12.5px;margin-top:4px;max-width:560px;margin-left:auto;margin-right:auto;text-align:center}
   /* tabs */
-  nav{position:fixed;bottom:0;left:0;right:0;background:var(--card);border-top:1px solid var(--line);display:flex;z-index:50}
-  nav button{flex:1;background:none;border:none;color:var(--steel);font-family:var(--disp);font-weight:700;font-size:14px;letter-spacing:.6px;text-transform:uppercase;padding:10px 4px 12px;cursor:pointer;min-height:56px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;opacity:.65}
+  nav{position:fixed;bottom:0;left:0;right:0;background:var(--card);border-top:1px solid var(--line);display:flex;z-index:50;padding-bottom:env(safe-area-inset-bottom)}
+  nav button{flex:1;background:none;border:none;color:var(--steel);font-family:var(--disp);font-weight:700;font-size:14px;letter-spacing:.6px;text-transform:uppercase;padding:10px 4px 12px;cursor:pointer;min-height:56px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;opacity:.65;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+  nav button:active{opacity:1}
   nav button svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8}
   nav button.on{color:var(--amber-text);border-top:3px solid var(--amber);margin-top:-2px;opacity:1}
   .tab{display:none}.tab.on{display:block}
@@ -39,10 +44,10 @@
   .muted{color:var(--dim);font-size:13px}
   .pill{display:inline-block;background:var(--card2);border:1px solid var(--line);border-radius:999px;padding:3px 10px;font-size:12px;color:var(--dim);margin:2px 4px 2px 0}
   .pill.hot{background:var(--amber);color:var(--amber-ink);border-color:var(--amber);font-weight:600}
-  select,input[type=number],input[type=date],input[type=email],input[type=text],input[type=time]{background:var(--card2);border:1px solid var(--line);border-radius:8px;color:var(--ink);padding:12px 10px;font-size:15px;font-family:var(--body);width:100%;min-height:44px}
+  select,input[type=number],input[type=date],input[type=email],input[type=text],input[type=time]{background:var(--card2);border:1px solid var(--line);border-radius:8px;color:var(--ink);padding:12px 10px;font-size:16px;font-family:var(--body);width:100%;min-height:44px;touch-action:manipulation}
   input[type=number]{-moz-appearance:textfield;font-family:var(--mono);font-weight:600}
   select:focus,input:focus{outline:none;border-color:var(--amber)}
-  .btn{display:block;width:100%;background:var(--amber);color:var(--amber-ink);border:none;border-radius:8px;font-family:var(--disp);font-weight:700;font-size:19px;letter-spacing:.6px;text-transform:uppercase;padding:13px;cursor:pointer;margin-top:10px;min-height:44px}
+  .btn{display:block;width:100%;background:var(--amber);color:var(--amber-ink);border:none;border-radius:8px;font-family:var(--disp);font-weight:700;font-size:19px;letter-spacing:.6px;text-transform:uppercase;padding:13px;cursor:pointer;margin-top:10px;min-height:44px;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
   .btn:active{transform:scale(.98)}
   .btn.ghost{background:transparent;color:var(--amber-text);border:1px solid var(--amber-text)}
   .btn.sm{width:auto;display:inline-block;font-size:15px;padding:8px 14px;margin-top:6px;min-height:44px}
@@ -57,7 +62,8 @@
   select.day-select{background:var(--card2);border:1px solid var(--line);border-radius:8px;color:var(--dim);font-size:12.5px;text-transform:uppercase;letter-spacing:.05em;padding:9px 10px;width:auto;min-width:180px;min-height:40px}
   /* session history */
   .hist-card{background:var(--card);border:1px solid var(--line);border-radius:12px;margin-bottom:10px;overflow:hidden}
-  .hist-card-head{display:flex;align-items:center;gap:10px;padding:12px 14px;cursor:pointer}
+  .hist-card-head{display:flex;align-items:center;gap:10px;padding:12px 14px;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+  .hist-card-head:active{opacity:.8}
   .hist-date{font-family:var(--mono);font-size:12.5px;color:var(--dim);flex-shrink:0}
   .hist-dayname{flex:1;font-size:13.5px;font-weight:600;color:var(--ink);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .hist-vol{font-family:var(--mono);font-weight:700;font-size:16px;color:var(--amber-text);flex-shrink:0}
@@ -77,7 +83,8 @@
   /* exercise logger */
   #logArea{display:flex;flex-direction:column;gap:10px;margin-bottom:12px}
   .ex{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 14px 12px;overflow:hidden}
-  .ex-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;cursor:pointer}
+  .ex-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+  .ex-head:active{opacity:.8}
   .ex.expanded .ex-head{padding-bottom:10px;margin-bottom:10px;border-bottom:1px solid var(--line)}
   .ex .name{font-family:var(--disp);font-weight:700;font-size:20px;text-transform:uppercase;letter-spacing:.3px;line-height:1.15;color:var(--ink)}
   .ex .target{flex-shrink:0;display:inline-block;background:var(--highest);color:var(--steel);font-family:var(--mono);font-size:11.5px;font-weight:700;letter-spacing:.03em;padding:5px 12px;border-radius:999px;white-space:nowrap;transition:background .2s,color .2s}
@@ -95,37 +102,41 @@
   .setrow:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
   .setrow .n{color:var(--steel);font-family:var(--mono);font-weight:700;font-size:18px;text-align:center}
   .setrow input{padding:10px 6px;text-align:center;background:var(--card2);min-height:48px;font-size:18px;font-weight:700;border-radius:8px;border:1.5px solid var(--line)}
-  .setrow .ok{width:48px;height:48px;border-radius:10px;border:1.5px solid var(--line);background:var(--card2);color:var(--dim);font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+  .setrow .ok{width:48px;height:48px;border-radius:10px;border:1.5px solid var(--line);background:var(--card2);color:var(--dim);font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+  .setrow .ok:active{opacity:.7}
   .setrow .ok.done{background:var(--amber);border-color:var(--amber);color:var(--amber-ink)}
   .setrow.upcoming{opacity:.4}
   .setrow.active input{border-color:var(--amber)}
   .setrow.active .ok{border-color:var(--amber);color:var(--amber-text)}
   .bento-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+  @media (max-width:359px){.bento-row{grid-template-columns:1fr}.bento-card{aspect-ratio:auto;flex-direction:row;align-items:center;justify-content:space-between}}
   .bento-card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;aspect-ratio:1/1;display:flex;flex-direction:column;justify-content:space-between}
   .bento-label{color:var(--dim);font-size:11px;text-transform:uppercase;letter-spacing:.08em;font-weight:600}
   .bento-value{font-family:var(--mono);font-weight:700;font-size:26px;color:var(--amber-text);line-height:1.1}
   .bento-value.optimal{color:var(--blue)}
   .bento-value.slow{color:var(--red)}
   .bento-unit{color:var(--dim);font-size:10.5px;text-transform:uppercase;letter-spacing:.05em}
-  .save-bar{position:fixed;left:0;right:0;bottom:62px;z-index:40;max-width:560px;margin:0 auto;padding:0 14px;pointer-events:none}
+  .save-bar{position:fixed;left:0;right:0;bottom:calc(62px + env(safe-area-inset-bottom));z-index:40;max-width:560px;margin:0 auto;padding:0 14px;pointer-events:none}
   .save-bar .btn{margin-top:0;box-shadow:0 10px 26px rgba(0,0,0,.45);pointer-events:auto}
-  #tab-train{padding-bottom:110px}
+  #tab-train{padding-bottom:calc(110px + env(safe-area-inset-bottom))}
   /* program view */
-  .split-chip-row{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:14px}
+  .split-chip-row{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:14px;-webkit-overflow-scrolling:touch}
   .split-chip-row::-webkit-scrollbar{display:none}
-  .split-chip{flex-shrink:0;padding:8px 14px;background:var(--card2);color:var(--steel);font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;border-radius:8px;border:1px solid var(--line);cursor:pointer;white-space:nowrap;min-height:36px}
+  .split-chip{flex-shrink:0;padding:8px 14px;background:var(--card2);color:var(--steel);font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;border-radius:8px;border:1px solid var(--line);cursor:pointer;white-space:nowrap;min-height:36px;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+  .split-chip:active{opacity:.75}
   .split-chip.active{background:var(--amber);color:var(--amber-ink);border-color:var(--amber)}
   .split-chip.lib{background:none;color:var(--dim);border:none;text-decoration:underline;font-weight:600}
   .pday{background:var(--card);border:1px solid var(--line);border-radius:12px;margin-bottom:12px;overflow:hidden}
   .pday.today{border-color:var(--amber)}
   .pday.rest{opacity:.65}
-  .pday-head{display:flex;align-items:center;gap:10px;padding:14px;cursor:pointer}
-  .pday-prefix{font-family:var(--mono);font-weight:700;font-size:14px;color:var(--steel)}
+  .pday-head{display:flex;align-items:center;gap:10px;padding:14px;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+  .pday-head:active{opacity:.8}
+  .pday-prefix{font-family:var(--mono);font-weight:700;font-size:14px;color:var(--steel);flex-shrink:0}
   .pday.today .pday-prefix{color:var(--amber-text)}
-  .pday-bar{width:3px;height:22px;background:var(--steel);border-radius:2px}
+  .pday-bar{width:3px;height:22px;background:var(--steel);border-radius:2px;flex-shrink:0}
   .pday.today .pday-bar{background:var(--amber)}
-  .pday-name{font-family:var(--disp);font-weight:700;font-size:18px;text-transform:uppercase;flex:1}
-  .pday-badge{display:flex;align-items:center;gap:5px;color:var(--amber-text);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em}
+  .pday-name{font-family:var(--disp);font-weight:700;font-size:18px;text-transform:uppercase;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .pday-badge{display:flex;align-items:center;gap:5px;color:var(--amber-text);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;flex-shrink:0}
   .pday-badge svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2}
   .pday-chevron{width:16px;height:16px;stroke:var(--dim);fill:none;stroke-width:2;transition:transform .2s;flex-shrink:0}
   .pday.expanded .pday-chevron{transform:rotate(180deg)}
@@ -145,8 +156,9 @@
   .calc-grid label{display:block;color:var(--dim);font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px}
   .calc-grid input{font-family:var(--mono)}
   .pill-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
-  .calc-pill{flex:1;min-width:80px;min-height:44px;padding:8px 10px;background:var(--card2);color:var(--steel);font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;border-radius:8px;border:1px solid var(--line);cursor:pointer}
+  .calc-pill{flex:1;min-width:80px;min-height:44px;padding:8px 10px;background:var(--card2);color:var(--steel);font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;border-radius:8px;border:1px solid var(--line);cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
   .calc-pill.active{background:var(--amber);color:var(--amber-ink);border-color:var(--amber)}
+  .calc-pill:active{opacity:.8}
   select#calcActivity{margin-bottom:10px}
   .calc-error{color:var(--red);font-size:12px;min-height:16px;margin-bottom:4px}
   .calc-results{margin-top:14px;border-top:1px solid var(--line);padding-top:12px}
@@ -164,6 +176,7 @@
   .kcalring-of{color:var(--dim);font-size:12px;margin-top:2px}
   .kcalring-chip{display:block;text-align:center;margin:8px auto 4px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--amber-text)}
   .macro{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:8px 0}
+  @media (max-width:400px){.macro{grid-template-columns:repeat(2,1fr)}}
   .macro div{background:var(--card2);border:1px solid var(--line);border-radius:12px;text-align:center;padding:10px 6px}
   .macro b{display:block;font-family:var(--mono);font-size:20px;color:var(--amber-text);font-weight:700}
   .macro small{color:var(--dim);font-size:10.5px;text-transform:uppercase;letter-spacing:.3px}
@@ -177,7 +190,8 @@
   .meal-info{flex:1;min-width:0}
   .meal-name{font-weight:600;font-size:14.5px}
   .meal-meta{color:var(--dim);font-size:11.5px;text-transform:uppercase;letter-spacing:.03em;margin-top:2px;font-family:var(--mono)}
-  .meal-log-btn{background:var(--card2);border:1px solid var(--amber-text);color:var(--amber-text);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;border-radius:8px;padding:8px 12px;cursor:pointer;min-height:40px;flex-shrink:0}
+  .meal-log-btn{background:var(--card2);border:1px solid var(--amber-text);color:var(--amber-text);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;border-radius:8px;padding:8px 12px;cursor:pointer;min-height:44px;flex-shrink:0;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+  .meal-log-btn:active{opacity:.75}
   .meal-done{width:32px;height:32px;border-radius:50%;background:var(--amber);color:var(--amber-ink);display:flex;align-items:center;justify-content:center;flex-shrink:0}
   .meal-done svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:3}
   .meal-edit-row{display:grid;grid-template-columns:1fr 90px 70px 30px;gap:5px;margin-bottom:6px}
@@ -206,12 +220,12 @@
   .milestone-dot{width:8px;height:8px;border-radius:50%;background:var(--amber);flex-shrink:0}
   .milestone-text{font-size:13.5px}
   .milestone-date{color:var(--dim);font-size:11px;margin-left:auto;font-family:var(--mono);flex-shrink:0}
-  .toast{position:fixed;bottom:96px;left:50%;transform:translateX(-50%);background:var(--green);color:#0a2e17;font-weight:600;padding:10px 18px;border-radius:999px;font-size:13.5px;opacity:0;pointer-events:none;transition:opacity .25s;z-index:60;max-width:92vw;white-space:normal;text-align:center}
+  .toast{position:fixed;bottom:calc(96px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);background:var(--green);color:#0a2e17;font-weight:600;padding:10px 18px;border-radius:999px;font-size:13.5px;opacity:0;pointer-events:none;transition:opacity .25s;z-index:60;max-width:92vw;white-space:normal;text-align:center}
   .toast.show{opacity:1}
   .rulebox{border-left:4px solid var(--green);padding-left:10px;margin:8px 0;font-size:13.5px;color:var(--dim)}
   .rulebox b{color:var(--ink)}
   .exwrap{position:relative}
-  .exdrop{position:absolute;top:calc(100% + 3px);left:0;right:0;background:var(--card);border:1px solid var(--line);border-radius:8px;max-height:40vh;overflow-y:auto;z-index:200;box-shadow:0 8px 24px rgba(0,0,0,.4)}
+  .exdrop{position:absolute;top:calc(100% + 3px);left:0;right:0;background:var(--card);border:1px solid var(--line);border-radius:8px;max-height:40vh;overflow-y:auto;-webkit-overflow-scrolling:touch;z-index:200;box-shadow:0 8px 24px rgba(0,0,0,.4)}
   .exdrop .grp{position:sticky;top:0;background:var(--highest);color:var(--amber-text);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;padding:5px 9px}
   .exdrop .opt{padding:10px 9px;font-size:13.5px;color:var(--ink);cursor:pointer;border-bottom:1px dashed var(--dash);min-height:44px;display:flex;align-items:center}
   .exdrop .opt:active,.exdrop .opt.hi{background:var(--card2)}
@@ -219,10 +233,10 @@
   .exdrop .custom:active{background:var(--card2)}
   .exdrop .empty{padding:10px 9px;font-size:13px;color:var(--dim)}
   .splitOverlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:300;display:flex;align-items:flex-end;justify-content:center}
-  .splitSheet{background:var(--card);border:1px solid var(--line);border-radius:16px 16px 0 0;max-height:80vh;overflow-y:auto;width:100%;max-width:560px;padding:14px}
+  .splitSheet{background:var(--card);border:1px solid var(--line);border-radius:16px 16px 0 0;max-height:80vh;overflow-y:auto;-webkit-overflow-scrolling:touch;width:100%;max-width:560px;padding:14px}
   .splitSheet h2{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
-  .splitSheet .closeX{background:none;border:none;color:var(--dim);font-size:20px;cursor:pointer;line-height:1;padding:2px 6px;min-width:44px;min-height:44px}
-  .splitCard{background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:10px;cursor:pointer}
+  .splitSheet .closeX{background:none;border:none;color:var(--dim);font-size:20px;cursor:pointer;line-height:1;padding:2px 6px;min-width:44px;min-height:44px;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+  .splitCard{background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:10px;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
   .splitCard:active{background:var(--highest)}
   .splitCard b{color:var(--ink);font-size:15px}
   .splitCard .tag{float:right;color:var(--amber-text);font-family:var(--mono);font-size:14px}
@@ -259,8 +273,8 @@
   .gate-note{color:var(--dim);font-size:11.5px;margin-top:10px}
   .gate-headline{font-family:var(--disp);font-weight:800;font-size:26px;text-transform:uppercase;letter-spacing:.3px;margin-bottom:10px}
   .gate-email-shown{font-family:var(--mono);color:var(--amber-text);font-size:14px;margin-bottom:22px;word-break:break-all}
-  .code-boxes{display:flex;gap:8px;justify-content:center;margin-bottom:14px}
-  .code-box{width:44px;height:56px;text-align:center;font-family:var(--mono);font-size:24px;font-weight:700;background:var(--card2);border:1.5px solid var(--line);border-radius:10px;color:var(--ink);padding:0}
+  .code-boxes{display:flex;gap:clamp(5px,2vw,8px);justify-content:center;margin-bottom:14px}
+  .code-box{width:clamp(38px,11vw,44px);height:clamp(50px,15vw,56px);text-align:center;font-family:var(--mono);font-size:clamp(18px,5.5vw,24px);font-weight:700;background:var(--card2);border:1.5px solid var(--line);border-radius:10px;color:var(--ink);padding:0;touch-action:manipulation}
   .code-box:focus{border-color:var(--amber);outline:none}
   .gate-error{color:var(--red);font-size:12.5px;min-height:16px;margin-bottom:8px}
   .gate-state .btn.ghost.sm{width:100%;margin-top:8px}
@@ -322,7 +336,7 @@
     <div class="gate-logo"><svg viewBox="0 0 24 24"><path d="M6.5 8v8M17.5 8v8M3 10v4M21 10v4M6.5 12h11" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
     <div class="gate-app-name">Bulk <span>Control</span> Center</div>
     <p class="gate-tagline">Your gains, backed up. Sign in with just your email — no password to remember.</p>
-    <input type="email" id="gateEmailInput" placeholder="Enter your email">
+    <input type="email" id="gateEmailInput" placeholder="Enter your email" autocomplete="email" inputmode="email">
     <button class="btn" id="gateSendCode">Send code</button>
     <p class="gate-note">No password. We email you a 6-digit code.</p>
     <div class="acct-reassure">
@@ -424,9 +438,9 @@
       <div class="calc-head" id="calcHead"><h2>🎯 Calculate my target</h2><svg class="calc-chevron" id="calcChevron" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
       <div class="calc-body" id="calcBody" style="display:none">
         <div class="calc-grid">
-          <div><label>Weight (kg)</label><input type="number" id="calcW" placeholder="80"></div>
-          <div><label>Height (cm)</label><input type="number" id="calcH" placeholder="178"></div>
-          <div><label>Age</label><input type="number" id="calcAge" placeholder="25"></div>
+          <div><label>Weight (kg)</label><input type="number" id="calcW" placeholder="80" inputmode="decimal"></div>
+          <div><label>Height (cm)</label><input type="number" id="calcH" placeholder="178" inputmode="numeric"></div>
+          <div><label>Age</label><input type="number" id="calcAge" placeholder="25" inputmode="numeric"></div>
         </div>
         <div class="pill-row" id="calcSexRow">
           <button class="calc-pill" data-sex="m">Male</button>
@@ -482,11 +496,11 @@
       </div>
       <p class="muted">Not gaining after 2 weeks? Bump the kcal target:</p>
       <div class="addrow">
-        <input type="number" id="kcalTarget" placeholder="New kcal target">
+        <input type="number" id="kcalTarget" placeholder="New kcal target" inputmode="numeric">
         <button class="btn sm" id="setKcal">Set</button>
       </div>
       <div class="addrow">
-        <input type="number" id="kcalAdd" placeholder="Add kcal...">
+        <input type="number" id="kcalAdd" placeholder="Add kcal..." inputmode="numeric">
         <button class="btn sm" id="addKcal">+ Add</button>
       </div>
       <button class="btn ghost sm" id="resetKcal">Reset day</button>
@@ -523,7 +537,7 @@
       <p class="muted">Weigh every morning, same conditions. Judge the weekly average, not the daily noise.</p>
       <svg class="chart" id="wChart" viewBox="0 0 340 170" preserveAspectRatio="none"></svg>
       <div class="addrow" style="margin-top:10px">
-        <input type="number" step="0.1" id="wInput" placeholder="Today's weight (kg)">
+        <input type="number" step="0.1" id="wInput" placeholder="Today's weight (kg)" inputmode="decimal">
         <button class="btn sm" id="addW">Log</button>
       </div>
       <div id="wStats" class="muted" style="margin-top:6px"></div>
@@ -879,8 +893,8 @@ function drawLogArea(){
     let rows = `<div class="colhead"><span>Set</span><span>KG</span><span>Reps</span><span>✓</span></div>`;
     for(let s=0;s<e[2];s++){
       rows += `<div class="setrow${s===0?' active':' upcoming'}"><span class="n">${s+1}</span>
-        <input type="number" step="0.5" data-ex="${ei}" data-set="${s}" data-f="w" placeholder="${prev?.sets[s]?.w||'kg'}" onfocus="promoteRow(this)" oninput="updateBento()">
-        <input type="number" data-ex="${ei}" data-set="${s}" data-f="r" placeholder="${prev?.sets[s]?.r||'reps'}" onfocus="promoteRow(this)" oninput="updateBento()">
+        <input type="number" step="0.5" inputmode="decimal" data-ex="${ei}" data-set="${s}" data-f="w" placeholder="${prev?.sets[s]?.w||'kg'}" onfocus="promoteRow(this)" oninput="updateBento()">
+        <input type="number" inputmode="numeric" data-ex="${ei}" data-set="${s}" data-f="r" placeholder="${prev?.sets[s]?.r||'reps'}" onfocus="promoteRow(this)" oninput="updateBento()">
         <button class="ok" onclick="onSetToggle(this)">✓</button></div>`;
     }
     return `<div class="ex${ei===0?' expanded':''}" data-exi="${ei}">
@@ -1140,7 +1154,7 @@ function drawMealEditor(){
     <div class="meal-edit-row">
       <input type="text" value="${m.name.replace(/"/g,'&quot;')}" data-mf="${mi}-name" placeholder="Name">
       <input type="time" value="${m.time}" data-mf="${mi}-time">
-      <input type="number" value="${m.kcal}" data-mf="${mi}-kcal" placeholder="kcal">
+      <input type="number" value="${m.kcal}" data-mf="${mi}-kcal" placeholder="kcal" inputmode="numeric">
       <button onclick="delMeal(${mi})" style="background:none;border:none;color:var(--red);font-size:17px;cursor:pointer">✕</button>
     </div>`).join('') + `
     <button class="btn ghost sm" onclick="addMeal()">+ Add meal</button>
@@ -1324,10 +1338,10 @@ function drawEditor(){
       <input type="text" value="${d.day.replace(/"/g,'&quot;')}" data-day="${di}" style="width:100%;margin-bottom:6px;background:var(--card);border:1px solid var(--line);border-radius:8px;color:var(--ink);padding:8px;font-weight:600">
       ${d.ex.map((e,ei)=>`
         <div style="display:grid;grid-template-columns:1fr 80px 44px 30px;gap:5px;margin-bottom:5px">
-          <div class="exwrap"><input type="text" autocomplete="off" value="${e[0].replace(/"/g,'&quot;')}" data-ex="${di}-${ei}-0" placeholder="Exercise" style="width:100%;background:var(--card);border:1px solid var(--line);border-radius:7px;color:var(--ink);padding:7px;font-size:13px"></div>
-          <input type="text" value="${e[1].replace(/"/g,'&quot;')}" data-ex="${di}-${ei}-1" placeholder="4×8-10" style="background:var(--card);border:1px solid var(--line);border-radius:7px;color:var(--ink);padding:7px;font-size:13px;text-align:center">
-          <input type="number" value="${e[2]}" min="1" max="8" data-ex="${di}-${ei}-2" style="background:var(--card);border:1px solid var(--line);border-radius:7px;color:var(--ink);padding:7px;text-align:center">
-          <button onclick="delEx(${di},${ei})" style="background:none;border:none;color:var(--red);font-size:17px;cursor:pointer">✕</button>
+          <div class="exwrap"><input type="text" autocomplete="off" value="${e[0].replace(/"/g,'&quot;')}" data-ex="${di}-${ei}-0" placeholder="Exercise" style="width:100%;background:var(--card);border:1px solid var(--line);border-radius:7px;color:var(--ink);padding:7px;font-size:16px"></div>
+          <input type="text" value="${e[1].replace(/"/g,'&quot;')}" data-ex="${di}-${ei}-1" placeholder="4×8-10" style="background:var(--card);border:1px solid var(--line);border-radius:7px;color:var(--ink);padding:7px;font-size:16px;text-align:center">
+          <input type="number" inputmode="numeric" value="${e[2]}" min="1" max="8" data-ex="${di}-${ei}-2" style="background:var(--card);border:1px solid var(--line);border-radius:7px;color:var(--ink);padding:7px;font-size:16px;text-align:center">
+          <button onclick="delEx(${di},${ei})" style="background:none;border:none;color:var(--red);font-size:17px;cursor:pointer;touch-action:manipulation">✕</button>
         </div>`).join('')}
       <div style="display:flex;gap:8px">
         <button class="btn ghost sm" onclick="addEx(${di})">+ Exercise</button>
