@@ -120,7 +120,7 @@
   .save-bar .btn{margin-top:0;box-shadow:0 10px 26px rgba(0,0,0,.45);pointer-events:auto}
   #tab-train{padding-bottom:calc(110px + env(safe-area-inset-bottom))}
   /* program view */
-  .split-chip-row{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:14px;-webkit-overflow-scrolling:touch}
+  .split-chip-row{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:14px;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
   .split-chip-row::-webkit-scrollbar{display:none}
   .split-chip{flex-shrink:0;padding:8px 14px;background:var(--card2);color:var(--steel);font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;border-radius:8px;border:1px solid var(--line);cursor:pointer;white-space:nowrap;min-height:36px;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
   .split-chip:active{opacity:.75}
@@ -225,15 +225,15 @@
   .rulebox{border-left:4px solid var(--green);padding-left:10px;margin:8px 0;font-size:13.5px;color:var(--dim)}
   .rulebox b{color:var(--ink)}
   .exwrap{position:relative}
-  .exdrop{position:absolute;top:calc(100% + 3px);left:0;right:0;background:var(--card);border:1px solid var(--line);border-radius:8px;max-height:40vh;overflow-y:auto;-webkit-overflow-scrolling:touch;z-index:200;box-shadow:0 8px 24px rgba(0,0,0,.4)}
+  .exdrop{position:fixed;background:var(--card);border:1px solid var(--line);border-radius:8px;max-height:40vh;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;z-index:9000;box-shadow:0 8px 24px rgba(0,0,0,.4)}
   .exdrop .grp{position:sticky;top:0;background:var(--highest);color:var(--amber-text);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;padding:5px 9px}
-  .exdrop .opt{padding:10px 9px;font-size:13.5px;color:var(--ink);cursor:pointer;border-bottom:1px dashed var(--dash);min-height:44px;display:flex;align-items:center}
+  .exdrop .opt{padding:10px 9px;font-size:13.5px;color:var(--ink);cursor:pointer;border-bottom:1px dashed var(--dash);min-height:44px;display:flex;align-items:center;touch-action:manipulation;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
   .exdrop .opt:active,.exdrop .opt.hi{background:var(--card2)}
-  .exdrop .custom{padding:10px 9px;font-size:12.5px;color:var(--dim);cursor:pointer;font-style:italic;min-height:44px;display:flex;align-items:center}
+  .exdrop .custom{padding:10px 9px;font-size:12.5px;color:var(--dim);cursor:pointer;font-style:italic;min-height:44px;display:flex;align-items:center;touch-action:manipulation;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
   .exdrop .custom:active{background:var(--card2)}
   .exdrop .empty{padding:10px 9px;font-size:13px;color:var(--dim)}
   .splitOverlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:300;display:flex;align-items:flex-end;justify-content:center}
-  .splitSheet{background:var(--card);border:1px solid var(--line);border-radius:16px 16px 0 0;max-height:80vh;overflow-y:auto;-webkit-overflow-scrolling:touch;width:100%;max-width:560px;padding:14px}
+  .splitSheet{background:var(--card);border:1px solid var(--line);border-radius:16px 16px 0 0;max-height:80vh;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;width:100%;max-width:560px;padding:14px}
   .splitSheet h2{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
   .splitSheet .closeX{background:none;border:none;color:var(--dim);font-size:20px;cursor:pointer;line-height:1;padding:2px 6px;min-width:44px;min-height:44px;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
   .splitCard{background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:10px;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
@@ -795,7 +795,7 @@ function renderLogger(){
   MANUAL_DAY_OVERRIDE=false;
   const todayIdx = findTodayProgramIndex();
   sel.value = todayIdx>=0 ? todayIdx : 0;
-  sel.onchange = ()=>{MANUAL_DAY_OVERRIDE=true;resetSessionTimer();drawLogArea();updateSessionHeader()};
+  sel.onchange = ()=>{MANUAL_DAY_OVERRIDE=true;resetSessionTimer();drawLogArea();updateSessionHeader();closeExDrop()};
   drawLogArea();
   updateSessionHeader();
 }
@@ -1259,6 +1259,7 @@ function renderMilestones(){
 /* ── program editor ── */
 let EDITING=false;
 document.getElementById('editProg').onclick=()=>{
+  closeExDrop();
   EDITING=!EDITING;
   document.getElementById('progEditor').style.display=EDITING?'block':'none';
   document.getElementById('programList').style.display=EDITING?'none':'block';
@@ -1277,7 +1278,11 @@ const EXERCISE_DB={
   "Abs/Core":["Crunch","Cable Crunch","Machine Crunch","Sit-Up","Weighted Sit-Up","Hanging Leg Raise","Hanging Knee Raise","Captain's Chair Leg Raise","Plank","Side Plank","Russian Twist","Cable Woodchop","Ab Wheel Rollout","Reverse Crunch","Bicycle Crunch","V-Up","Mountain Climber","Toe Touch","Flutter Kick","Dead Bug","Pallof Press","Decline Sit-Up","Landmine Rotation","Hollow Body Hold","Dragon Flag"],
   "Forearms":["Wrist Curl (Barbell)","Wrist Curl (Dumbbell)","Reverse Wrist Curl","Farmer's Carry","Behind-the-Back Wrist Curl","Plate Pinch Hold","Wrist Roller","Reverse Curl (Forearm)","Dead Hang","Grip Crusher"]
 };
-let EXOPEN=null;
+let EXOPEN=null;      // the input whose dropdown is currently open
+let EXDROP_EL=null;   // the dropdown DOM node (portaled to document.body)
+let EX_REPOSITION=null;
+let EX_BLUR_TIMER=null;
+let EX_SUPPRESS_REOPEN=false;
 function exFilter(q){
   q=(q||'').trim().toLowerCase();
   const groups=[];
@@ -1287,10 +1292,33 @@ function exFilter(q){
   });
   return groups;
 }
+function closeExDrop(){
+  clearTimeout(EX_BLUR_TIMER);
+  if(EXDROP_EL){ EXDROP_EL.remove(); EXDROP_EL=null; }
+  if(EX_REPOSITION){
+    window.removeEventListener('scroll',EX_REPOSITION,true);
+    window.removeEventListener('resize',EX_REPOSITION);
+    EX_REPOSITION=null;
+  }
+  EXOPEN=null;
+}
+function positionExDrop(drop,input){
+  const r=input.getBoundingClientRect();
+  const vh=window.innerHeight;
+  const spaceBelow=vh-r.bottom, spaceAbove=r.top;
+  const openAbove = r.top > vh/2 && spaceAbove > spaceBelow;
+  drop.style.left=r.left+'px';
+  drop.style.width=r.width+'px';
+  if(openAbove){
+    drop.style.top='';
+    drop.style.bottom=(vh-r.top+3)+'px';
+  } else {
+    drop.style.bottom='';
+    drop.style.top=(r.bottom+3)+'px';
+  }
+}
 function exRenderDrop(input){
-  document.querySelectorAll('.exdrop').forEach(d=>d.remove());
-  const wrap=input.closest('.exwrap');
-  if(!wrap)return;
+  closeExDrop(); // only one dropdown open at a time
   const q=input.value;
   const groups=exFilter(q);
   const drop=document.createElement('div');
@@ -1311,22 +1339,40 @@ function exRenderDrop(input){
     html+=`<div class="custom" data-name="${q.replace(/"/g,'&quot;')}">Use custom exercise: "${q}"</div>`;
   }
   drop.innerHTML=html;
-  wrap.appendChild(drop);
+  document.body.appendChild(drop);
+  positionExDrop(drop,input);
+  EXDROP_EL=drop;
   EXOPEN=input;
+  EX_REPOSITION=()=>positionExDrop(drop,input);
+  window.addEventListener('scroll',EX_REPOSITION,true);
+  window.addEventListener('resize',EX_REPOSITION);
+  const selectRow=(name)=>{
+    EX_SUPPRESS_REOPEN=true;
+    input.value=name;
+    input.dispatchEvent(new Event('input'));
+    closeExDrop();
+    input.blur();
+    setTimeout(()=>{EX_SUPPRESS_REOPEN=false;},0);
+  };
   drop.querySelectorAll('.opt,.custom').forEach(row=>{
-    row.addEventListener('mousedown',ev=>{
+    let picked=false;
+    const pick=ev=>{
+      if(picked)return; picked=true;
       ev.preventDefault();
-      input.value=row.dataset.name;
-      input.dispatchEvent(new Event('input'));
-      drop.remove();
-      EXOPEN=null;
-    });
+      selectRow(row.dataset.name);
+    };
+    row.addEventListener('pointerdown',pick);
+    row.addEventListener('mousedown',pick);
   });
 }
-document.addEventListener('click',ev=>{
-  if(EXOPEN && !ev.target.closest('.exwrap')){
-    document.querySelectorAll('.exdrop').forEach(d=>d.remove());
-    EXOPEN=null;
+document.addEventListener('pointerdown',ev=>{
+  if(EXOPEN && !ev.target.closest('.exwrap') && !ev.target.closest('.exdrop')){
+    closeExDrop();
+  }
+});
+document.addEventListener('mousedown',ev=>{
+  if(EXOPEN && !ev.target.closest('.exwrap') && !ev.target.closest('.exdrop')){
+    closeExDrop();
   }
 });
 let DRAFT=null;
@@ -1356,11 +1402,17 @@ function drawEditor(){
     i.oninput=()=>{
       const [di,ei,f]=i.dataset.ex.split('-').map(Number);
       DRAFT[di].ex[ei][f]= f===2 ? Math.max(1,+i.value||1) : i.value;
-      if(f===0) exRenderDrop(i);
+      if(f===0 && !EX_SUPPRESS_REOPEN) exRenderDrop(i);
     };
     const [,,f]=i.dataset.ex.split('-').map(Number);
     if(f===0){
       i.onfocus=()=>exRenderDrop(i);
+      i.onblur=()=>{
+        EX_BLUR_TIMER=setTimeout(()=>{ if(EXOPEN===i) closeExDrop(); },150);
+      };
+      i.addEventListener('keydown',ev=>{
+        if(ev.key==='Escape'){ closeExDrop(); i.blur(); }
+      });
     }
   });
 }
