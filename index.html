@@ -639,7 +639,14 @@
   import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
   const SUPABASE_URL = 'https://uygfgmvotznsbtkngpeb.supabase.co';
   const SUPABASE_ANON_KEY = 'sb_publishable_gkkmQikU4xgNUfNTyMkfgg_9kOo6uy9';
-  window._sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  window._sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+    auth: {
+      persistSession: true,
+      autoRefreshToken: true,
+      storage: window.localStorage,
+      detectSessionInUrl: false
+    }
+  });
   window.dispatchEvent(new Event('sb-ready'));
 </script>
 
@@ -1916,27 +1923,58 @@ function revealApp(){
   document.querySelector('.wrap').style.display='';
   document.querySelector('nav').style.display='';
 }
+function readPersistedSessionFromStorage(){
+  // Reads the Supabase session directly out of localStorage, with zero network
+  // calls. Used when offline so we never depend on getSession()'s internal
+  // auto-refresh (which does hit the network if the access token is expired,
+  // and fails offline — the actual cause of the "asks for email again" bug).
+  try{
+    for(let i=0;i<localStorage.length;i++){
+      const key=localStorage.key(i);
+      if(key && /^sb-.*-auth-token$/.test(key)){
+        const raw=localStorage.getItem(key);
+        if(!raw) continue;
+        const parsed=JSON.parse(raw);
+        const session = parsed && parsed.currentSession ? parsed.currentSession : parsed;
+        if(session && session.access_token && session.user) return session;
+      }
+    }
+  }catch(e){}
+  return null;
+}
 async function initCloud(){
   const client=sb();
   if(!client){ revealApp(); window.markSplashInitDone&&window.markSplashInitDone(); return; }
-  const {data:{session}}=await client.auth.getSession();
-  SESSION=session;
+
+  if(!navigator.onLine){
+    // Offline: trust whatever session is already persisted locally. Never call
+    // getSession()/getUser() here — both can attempt a network refresh and would
+    // otherwise incorrectly bounce an already-signed-in user back to the gate.
+    SESSION = readPersistedSessionFromStorage();
+  } else {
+    const {data:{session}}=await client.auth.getSession();
+    SESSION=session;
+  }
+
   if(SESSION){
     revealApp();
-    window.markSplashInitDone&&window.markSplashInitDone();
     renderAcct();
-    await pullAndMerge();
-    await sync();
+    if(navigator.onLine){ await pullAndMerge(); await sync(); }
   } else {
     showGate('gateEmail');
-    window.markSplashInitDone&&window.markSplashInitDone();
   }
-  client.auth.onAuthStateChange((_evt,newSession)=>{
-    if(newSession && !SESSION){
+  window.markSplashInitDone&&window.markSplashInitDone();
+
+  client.auth.onAuthStateChange((evt,newSession)=>{
+    if(newSession){
       SESSION=newSession;
-    } else {
-      SESSION=newSession;
+    } else if(evt==='SIGNED_OUT'){
+      // A real, explicit sign-out — clear the session.
+      SESSION=null;
     }
+    // Any other event carrying a null session (e.g. a failed background token
+    // refresh while offline) is ignored — we keep the last known-good SESSION
+    // rather than silently logging the user out over a network hiccup.
     renderAcct();
   });
 }
@@ -1946,7 +1984,16 @@ document.getElementById('acctLogout').onclick=async()=>{
   SESSION=null; renderAcct();
   showGate('gateEmail');
 };
-window.addEventListener('online',sync);
+window.addEventListener('online',async()=>{
+  const client=sb();
+  if(client){
+    try{
+      const {data:{session}}=await client.auth.getSession();
+      if(session){ SESSION=session; renderAcct(); }
+    }catch(e){}
+  }
+  sync();
+});
 window.addEventListener('sb-ready',initCloud);
 if(window._sb) initCloud();
 
